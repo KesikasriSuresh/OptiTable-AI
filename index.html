@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIAG 07 - DataTables (Agentic Upload)</title>
+
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.4.0/css/fixedHeader.dataTables.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --color-darkest: #191D23;
+      --color-dark-teal: #57707A;
+      --color-medium-teal: #7A9BA8;
+      --color-light-gray: #9BA9AA;
+      --color-pale-pink: #C5BAC4;
+      --color-lightest: #DEDCDC;
+      --gradient-1: linear-gradient(135deg, #57707A 0%, #191D23 100%);
+      --gradient-2: linear-gradient(135deg, #C5BAC4 0%, #9BA9AA 100%);
+      --gradient-3: linear-gradient(135deg, #7A9BA8 0%, #57707A 100%);
+      --gradient-4: linear-gradient(135deg, #9BA9AA 0%, #7A9BA8 100%);
+      --gradient-5: linear-gradient(135deg, #DEDCDC 0%, #C5BAC4 100%);
+      --surface: #FFFFFF;
+      --background: #F5F5F5;
+      --border: #E5E7EB;
+      --text-primary: #191D23;
+      --text-secondary: #57707A;
+      --success: #7A9BA8;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(135deg, #7A9BA8 0%, #57707A 50%, #9BA9AA 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      color: var(--text-primary);
+      padding: 1.5rem;
+      min-height: 100vh;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .container { max-width: 1400px; margin: 0 auto; position: relative; z-index: 1; }
+    .header { margin-bottom: 1.5rem; }
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff 0%, #DEDCDC 50%, #fff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .header-subtitle {
+      font-size: 0.9375rem;
+      color: rgba(255, 255, 255, 0.95);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .badge-success {
+      background: linear-gradient(135deg, rgba(122, 155, 168, 0.25) 0%, rgba(155, 169, 170, 0.3) 100%);
+      border: 2px solid rgba(122, 155, 168, 0.5);
+      color: white;
+      padding: 0.375rem 0.875rem;
+      border-radius: 2rem;
+      font-size: 0.8125rem;
+      backdrop-filter: blur(10px);
+    }
+    .main-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(30px);
+      border-radius: 2rem;
+      box-shadow: 0 20px 80px rgba(25, 29, 35, 0.15);
+      border: 1px solid rgba(222, 220, 220, 0.3);
+      overflow: hidden;
+    }
+    .card-header { padding: 2.5rem; border-bottom: 2px solid rgba(122, 155, 168, 0.15); }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .upload-section {
+      background: linear-gradient(135deg, rgba(122, 155, 168, 0.08) 0%, rgba(197, 186, 196, 0.08) 100%);
+      border: 2px dashed rgba(122, 155, 168, 0.4);
+      border-radius: 0.875rem;
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+      transition: all 0.3s;
+    }
+    .upload-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .upload-title { font-size: 0.9375rem; font-weight: 600; display: flex; align-items: center; gap: 0.375rem; }
+    .upload-info { font-size: 0.75rem; color: var(--text-secondary); }
+    .upload-drop-zone {
+      width: 100%;
+      padding: 1.5rem 1rem;
+      background: rgba(255, 255, 255, 0.6);
+      border: 2px dashed rgba(122, 155, 168, 0.3);
+      border-radius: 0.75rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 0.75rem;
+    }
+    .upload-drop-zone:hover { background: rgba(255, 255, 255, 0.8); border-color: var(--color-dark-teal); }
+    .upload-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .upload-text-primary { font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .upload-text-secondary { font-size: 0.8125rem; color: var(--text-secondary); }
+    .upload-formats { display: flex; gap: 0.375rem; justify-content: center; margin-top: 0.5rem; flex-wrap: wrap; }
+    .format-badge {
+      padding: 0.1875rem 0.5rem;
+      background: rgba(122, 155, 168, 0.15);
+      border-radius: 0.375rem;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--color-dark-teal);
+      text-transform: uppercase;
+    }
+    .upload-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      padding: 0.625rem 1.25rem;
+      border: none;
+      border-radius: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-upload { background: var(--gradient-3); color: white; box-shadow: 0 8px 24px rgba(122, 155, 168, 0.4); }
+    .btn-upload:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(122, 155, 168, 0.5); }
+    .btn-sample { background: var(--gradient-2); color: white; box-shadow: 0 8px 24px rgba(197, 186, 196, 0.4); }
+    .btn-sample:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(197, 186, 196, 0.5); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+    .upload-status {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 0.75rem;
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.8125rem;
+      margin-top: 0.75rem;
+    }
+    .upload-status.show { display: flex; }
+    .upload-status.success { background: rgba(122, 155, 168, 0.15); border: 2px solid rgba(122, 155, 168, 0.4); }
+    .upload-status.error { background: rgba(255, 59, 48, 0.15); border: 2px solid rgba(255, 59, 48, 0.4); }
+    .upload-hidden-input { display: none; }
+    .file-info {
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.8125rem;
+    }
+    .file-info.show { display: flex; }
+    .file-info-details { flex: 1; }
+    .file-info-name { font-weight: 600; margin-bottom: 0.125rem; }
+    .file-info-meta { font-size: 0.75rem; color: var(--text-secondary); }
+    .file-info-remove {
+      background: rgba(255, 59, 48, 0.15);
+      color: #FF3B30;
+      border: none;
+      padding: 0.375rem 0.75rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+    .progress-container {
+      width: 100%;
+      height: 4px;
+      background: rgba(122, 155, 168, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    .progress-container.show { display: block; }
+    .progress-bar { height: 100%; background: var(--gradient-3); transition: width 0.2s ease; width: 0%; }
+
+    .filters-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .filter-label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+    .filter-input {
+      width: 100%;
+      padding: 0.875rem 1.25rem;
+      border: 2px solid rgba(122, 155, 168, 0.25);
+      border-radius: 1rem;
+      font-size: 0.9375rem;
+      transition: all 0.3s;
+      background: rgba(255, 255, 255, 0.8);
+    }
+    .filter-input:focus {
+      outline: none;
+      border-color: var(--color-dark-teal);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(122, 155, 168, 0.15);
+    }
+    .actions-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--gradient-1);
+      color: white;
+      box-shadow: 0 8px 24px rgba(87, 112, 122, 0.4);
+      padding: 0.75rem 1.5rem;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(87, 112, 122, 0.5); }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--text-primary);
+      border: 2px solid rgba(122, 155, 168, 0.3);
+      padding: 0.75rem 1.5rem;
+    }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.95); border-color: var(--color-dark-teal); transform: translateY(-2px); }
+
+    .table-container { padding: 2rem; }
+    table.dataTable { width: 100% !important; border-collapse: separate; border-spacing: 0; font-size: 0.9375rem; }
+    table.dataTable thead th {
+      background: var(--gradient-1);
+      color: white;
+      font-weight: 600;
+      padding: 1.25rem 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.8125rem;
+      white-space: nowrap;
+    }
+    table.dataTable tbody td { padding: 1.1rem 1rem; border-bottom: 1px solid var(--border); }
+    table.dataTable tbody tr { background: rgba(255, 255, 255, 0.6); transition: all 0.3s; }
+    table.dataTable tbody tr:hover {
+      background: linear-gradient(90deg, rgba(122, 155, 168, 0.1) 0%, rgba(197, 186, 196, 0.1) 100%);
+      transform: scale(1.01);
+    }
+
+    .loading-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.95);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999;
+      animation: fadeOut 0.5s ease 1s forwards;
+    }
+    @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+    .loader { width: 60px; height: 60px; border: 4px solid var(--border); border-top-color: var(--color-dark-teal); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Small agent panel under table */
+    .agent-panel {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(122, 155, 168, 0.25);
+      border-radius: 1rem;
+      font-size: 0.85rem;
+    }
+    .agent-panel pre {
+      margin-top: 0.6rem;
+      white-space: pre-wrap;
+      background: rgba(255,255,255,0.8);
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(0,0,0,0.06);
+      max-height: 260px;
+      overflow: auto;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="loading-overlay"><div class="loader"></div></div>
+
+  <div class="container">
+    <div class="header">
+      <h1>AIAG 07 - DataTables Optimization</h1>
+      <p class="header-subtitle">
+        Agentic AI-driven table customization
+        <span class="badge-success">AI-Optimized</span>
+      </p>
+    </div>
+
+    <div class="main-card">
+      <div class="card-header">
+        <h2 class="card-title">Data Explorer</h2>
+
+        <!-- Upload -->
+        <div class="upload-section" id="uploadSection">
+          <div class="upload-header">
+            <div class="upload-title"><span>📁</span> Upload Dataset</div>
+            <div class="upload-info"><span>💡</span> CSV supported (backend)</div>
+          </div>
+
+          <div class="upload-drop-zone" id="dropZone">
+            <div class="upload-icon">☁️</div>
+            <div class="upload-text-primary">Drag & Drop your dataset here</div>
+            <div class="upload-text-secondary">or click to browse</div>
+            <div class="upload-formats">
+              <span class="format-badge">CSV</span>
+              <span class="format-badge">Excel</span>
+              <span class="format-badge">JSON</span>
+            </div>
+          </div>
+
+          <input type="file" id="fileInput" class="upload-hidden-input" accept=".csv,text/csv">
+
+          <div class="upload-actions">
+            <button class="btn btn-upload" id="btnUpload">📤 Upload</button>
+            <button class="btn btn-sample" id="btnClear">🧹 Clear</button>
+          </div>
+
+          <div class="upload-status" id="uploadStatus">
+            <span id="statusIcon">✅</span>
+            <div id="statusText">Ready.</div>
+            <button id="statusClose" style="background:none;border:none;cursor:pointer;">✕</button>
+          </div>
+
+          <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+
+          <div class="file-info" id="fileInfo">
+            <span>📄</span>
+            <div class="file-info-details">
+              <div class="file-info-name" id="fileName">dataset.csv</div>
+              <div class="file-info-meta" id="fileMeta">—</div>
+            </div>
+            <button class="file-info-remove" id="btnRemoveFile">Remove</button>
+          </div>
+        </div>
+
+        <!-- Filters (mapped to backend if columns exist: status, category, created_at) -->
+        <div class="filters-container">
+          <div>
+            <label class="filter-label">Status</label>
+            <input type="text" class="filter-input" id="filterStatus" placeholder="open / closed / in_progress">
+          </div>
+          <div>
+            <label class="filter-label">Category</label>
+            <input type="text" class="filter-input" id="filterCategory" placeholder="billing / technical / general">
+          </div>
+          <div>
+            <label class="filter-label">From date (created_at)</label>
+            <input type="date" class="filter-input" id="filterFromDate">
+          </div>
+          <div>
+            <label class="filter-label">To date (created_at)</label>
+            <input type="date" class="filter-input" id="filterToDate">
+          </div>
+        </div>
+
+        <div class="actions-bar">
+          <button class="btn btn-primary" id="applyFilters">🔍 Apply Filters</button>
+          <button class="btn btn-secondary" id="resetFilters">↻ Reset</button>
+          <button class="btn btn-secondary" id="refreshData">⟳ Refresh</button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table id="peopleTable" class="display responsive nowrap" style="width:100%">
+          <thead></thead>
+        </table>
+
+        <div class="agent-panel">
+          <div style="font-weight:700; color: var(--text-secondary);">Agent Insights</div>
+          <pre id="agentInsights">{}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+  <script src="https://cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+  <script>
+    // ---- Backend endpoints (YOUR WORKING ONES)
+    const UPLOAD_URL = "http://127.0.0.1:8000/api/datasets/upload";
+    const TABLE_URL  = "http://127.0.0.1:8000/api/table";
+
+    let datasetId = null;
+    let datasetColumns = [];
+    let selectedFile = null;
+    let table = null;
+
+    function setAgentInsights(obj) {
+      document.getElementById("agentInsights").textContent = JSON.stringify(obj || {}, null, 2);
+    }
+
+    function showStatus(type, message) {
+      const statusEl = document.getElementById('uploadStatus');
+      statusEl.className = 'upload-status show ' + type;
+      document.getElementById('statusIcon').textContent = type === 'success' ? '✅' : (type === 'error' ? '❌' : 'ℹ️');
+      document.getElementById('statusText').textContent = message;
+      setTimeout(() => statusEl.classList.remove('show'), 5000);
+    }
+
+    function formatFileSize(bytes) {
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    function animateProgressStart() {
+      document.getElementById('progressContainer').classList.add('show');
+      let progress = 0;
+      const bar = document.getElementById('progressBar');
+      bar.style.width = '0%';
+      const interval = setInterval(() => {
+        progress += Math.random() * 18;
+        if (progress >= 90) { progress = 90; clearInterval(interval); }
+        bar.style.width = progress + '%';
+      }, 180);
+      return () => {
+        clearInterval(interval);
+        bar.style.width = '100%';
+        setTimeout(() => {
+          document.getElementById('progressContainer').classList.remove('show');
+          bar.style.width = '0%';
+        }, 350);
+      };
+    }
+
+    function applyAgentStrategy(strategy) {
+      if (!strategy) return;
+      console.log("Agent decision:", strategy);
+
+      // update DataTables page size if needed
+      if (table && strategy.pageSize) {
+        const currentLen = table.page.len();
+        if (currentLen !== strategy.pageSize) {
+          table.page.len(strategy.pageSize).draw(false);
+        }
+      }
+    }
+
+    function buildTableHead(cols) {
+      const ths = cols.map(c => `<th>${c}</th>`).join("");
+      $("#peopleTable thead").html(`<tr>${ths}</tr>`);
+    }
+
+    function getFilterParams() {
+      return {
+        status: $("#filterStatus").val() || "",
+        category: $("#filterCategory").val() || "",
+        fromDate: $("#filterFromDate").val() || "",
+        toDate: $("#filterToDate").val() || "",
+        viewportWidth: window.innerWidth || 0
+      };
+    }
+
+    function initOrReloadTable() {
+      if (!datasetId || !datasetColumns.length) {
+        showStatus("error", "Upload a CSV first to load the table.");
+        return;
+      }
+
+      if (table) {
+        table.ajax.reload();
+        return;
+      }
+
+      buildTableHead(datasetColumns);
+      const dtColumns = datasetColumns.map(c => ({ data: c }));
+
+      table = $("#peopleTable").DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        fixedHeader: true,
+        deferRender: true,
+        searchDelay: 350,
+        pageLength: 25,
+        lengthMenu: [[10,25,50,100],[10,25,50,100]],
+        stateSave: false,
+
+        dom: "Blfrtip",
+        buttons: [
+          { extend: "csvHtml5", text: "📄 CSV",   title: "records_export", exportOptions: { columns: ":visible" } },
+          { extend: "excelHtml5", text: "📊 Excel", title: "records_export", exportOptions: { columns: ":visible" } },
+          { extend: "pdfHtml5", text: "📑 PDF", title: "records_export", exportOptions: { columns: ":visible" } },
+          { extend: "print", text: "🖨️ Print", exportOptions: { columns: ":visible" } }
+        ],
+
+        columns: dtColumns,
+        order: [[0, "asc"]],
+
+        ajax: function(dtParams, callback) {
+          const filters = getFilterParams();
+          const query = { ...dtParams, ...filters, datasetId };
+
+          $.ajax({
+            url: TABLE_URL,
+            method: "GET",
+            data: query,
+            dataType: "json",
+            success: function(resp) {
+              const insights = resp.agentInsights || {};
+              setAgentInsights(insights);
+
+              if (insights.agentStrategy) {
+                applyAgentStrategy(insights.agentStrategy);
+              }
+
+              callback({
+                draw: resp.draw ?? dtParams.draw,
+                recordsTotal: resp.recordsTotal ?? 0,
+                recordsFiltered: resp.recordsFiltered ?? 0,
+                data: resp.data ?? []
+              });
+            },
+            error: function(xhr) {
+              setAgentInsights({
+                error: true,
+                message: "Table API error",
+                status: xhr.status,
+                response: (xhr.responseText || "").slice(0, 800)
+              });
+              callback({ draw: dtParams.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+            }
+          });
+        }
+      });
+    }
+
+    async function uploadSelectedFile() {
+      if (!selectedFile) {
+        showStatus("error", "No file selected.");
+        return;
+      }
+
+      const ext = "." + selectedFile.name.split(".").pop().toLowerCase();
+      if (ext !== ".csv") {
+        showStatus("error", "Backend upload currently supports CSV only. Upload a .csv file.");
+        return;
+      }
+
+      const stopProgress = animateProgressStart();
+      $("#btnUpload").prop("disabled", true);
+
+      try {
+        const form = new FormData();
+        form.append("file", selectedFile);
+
+        const res = await fetch(UPLOAD_URL, { method: "POST", body: form });
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(`Upload failed (${res.status}). ${txt.slice(0, 400)}`);
+        }
+
+        const json = await res.json();
+        datasetId = json.datasetId;
+        datasetColumns = json.columns || [];
+
+        // reset table if columns changed
+        if (table) {
+          table.destroy();
+          table = null;
+          $("#peopleTable thead").empty();
+        }
+
+        showStatus("success", `Uploaded ✓ rows=${json.rows ?? "?"} | datasetId=${datasetId}`);
+        initOrReloadTable();
+      } catch (e) {
+        showStatus("error", String(e.message || e));
+      } finally {
+        stopProgress();
+        $("#btnUpload").prop("disabled", false);
+      }
+    }
+
+    function resetUpload() {
+      selectedFile = null;
+      datasetId = null;
+      datasetColumns = [];
+      setAgentInsights({});
+
+      document.getElementById('fileInfo').classList.remove('show');
+      document.getElementById('fileInput').value = '';
+
+      if (table) {
+        table.destroy();
+        table = null;
+        $("#peopleTable thead").empty();
+      }
+      showStatus("info", "Cleared. Upload a CSV to continue.");
+    }
+
+    function handleFileSelect(file) {
+      if (!file) return;
+
+      selectedFile = file;
+
+      document.getElementById('fileName').textContent = file.name;
+      document.getElementById('fileMeta').textContent = `${formatFileSize(file.size)} • Ready to upload`;
+      document.getElementById('fileInfo').classList.add('show');
+
+      showStatus("info", "File selected. Click Upload.");
+    }
+
+    $(document).ready(function() {
+      // Upload UI wiring
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); });
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (e.dataTransfer.files.length > 0) handleFileSelect(e.dataTransfer.files[0]);
+      });
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) handleFileSelect(e.target.files[0]);
+      });
+
+      document.getElementById('btnUpload').addEventListener('click', uploadSelectedFile);
+      document.getElementById('btnClear').addEventListener('click', resetUpload);
+      document.getElementById('btnRemoveFile').addEventListener('click', resetUpload);
+      document.getElementById('statusClose').addEventListener('click', () => {
+        document.getElementById('uploadStatus').classList.remove('show');
+      });
+
+      // Filters
+      $('#applyFilters').on('click', function() {
+        if (!table) return;
+        table.ajax.reload();
+      });
+
+      $('#resetFilters').on('click', function() {
+        $("#filterStatus").val("");
+        $("#filterCategory").val("");
+        $("#filterFromDate").val("");
+        $("#filterToDate").val("");
+        if (table) table.ajax.reload();
+      });
+
+      $('#refreshData').on('click', function() {
+        if (table) table.ajax.reload(null, false);
+      });
+
+      window.addEventListener("resize", () => {
+        if (table) table.ajax.reload(null, false);
+      });
+
+      showStatus("info", "Upload a CSV to begin.");
+    });
+  </script>
+</body>
+</html>
