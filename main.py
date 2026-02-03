@@ -1,40 +1,37 @@
+from pydantic import BaseModel
+
 import os
 import csv
 import io
 import uuid
 import json
 import re
+from time import time
 from datetime import datetime
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
-import psycopg2
-from psycopg2.extras import execute_values
-from dotenv import load_dotenv
-
-from fastapi import FastAPI, UploadFile, File, Query, HTTPException
+from fastapi import FastAPI, UploadFile, File, Query, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
-# pip install openpyxl
-from openpyxl import Workbook
-from openpyxl.utils import get_column_letter
+from dotenv import load_dotenv
+import psycopg2
+from psycopg2.extras import execute_values
 
 # -----------------------------
 # Config
 # -----------------------------
 load_dotenv()
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL missing. Put it in .env")
+    raise RuntimeError("DATABASE_URL missing")
 
-# Schema-qualified tables
 SCHEMA = "datasets"
 DATASETS_TBL = f"{SCHEMA}.datasets"
 ROWS_TBL = f"{SCHEMA}.dataset_rows"
-STATS_TBL = f"{SCHEMA}.dataset_column_stats"
-USAGE_TBL = f"{SCHEMA}.dataset_filter_usage"
 
-app = FastAPI(title="AIAG-07 Backend (Upload CSV + DataTables + Agents + Export)")
+app = FastAPI(title="AIAG-07 Backend (Agentic DataTables)")
 
 app.add_middleware(
     CORSMiddleware,
@@ -44,15 +41,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# -----------------------------
-# DB
-# -----------------------------
-def get_conn():
-    return psycopg2.connect(DATABASE_URL)
+# =====================================================
+# SIMPLE QUERY CACHE (Agent)
+# =====================================================
+QUERY_CACHE: Dict[str, Dict[str, Any]] = {}
+CACHE_TTL = 30  # seconds
 
-# -----------------------------
-# Agents
-# -----------------------------
+
+def get_cache(key: str):
+    item = QUERY_CACHE.get(key)
+    if not item:
+        return None
+    if time() - item["ts"] > CACHE_TTL:
+        QUERY_CACHE.pop(key, None)
+        return None
+    return item["data"]
+
+
+def set_cache(key: str, data: Any):
+    QUERY_CACHE[key] = {"data": data, "ts": time()}
+
+
+# =====================================================
+# PERFORMANCE STRATEGY AGENT
+# =====================================================
 def performance_strategy_agent(
     rows: int,
     columns: int,
@@ -60,52 +72,250 @@ def performance_strategy_agent(
     used_fts: bool,
     viewport_width: int
 ) -> Dict[str, Any]:
-    """
-    Performance Strategy Decision Agent (PSDA)
-    """
+
     strategy = {
-        "processingMode": "server",      # client | server
-        "renderMode": "pagination",      # pagination | infinite_scroll
+        "processingMode": "server",
+        "renderMode": "pagination",
         "pageSize": 25,
         "reason": []
     }
 
-    # Processing mode
     if rows <= 5000 and columns <= 12:
         strategy["processingMode"] = "client"
-        strategy["reason"].append("Small dataset")
+        strategy["reason"].append("Small dataset (<=5000 rows, <=12 cols)")
 
-    # Rendering strategy
     if rows > 100000:
         strategy["renderMode"] = "infinite_scroll"
         strategy["pageSize"] = 50
-        strategy["reason"].append("Very large dataset")
+        strategy["reason"].append("Very large dataset (>100k rows)")
 
-    # Search-heavy datasets
+    # FTS always forces server mode
     if used_fts:
         strategy["processingMode"] = "server"
-        strategy["reason"].append("FTS enabled")
+        strategy["reason"].append("FTS search active -> server mode required")
 
-    # Mobile
     if viewport_width and viewport_width < 600:
         strategy["pageSize"] = 25
-        strategy["reason"].append("Small viewport")
+        strategy["reason"].append("Small viewport (<600px) -> page size 25")
 
-    # Wide screens
     if viewport_width and viewport_width > 1200 and rows < 100000:
         strategy["pageSize"] = 100
-        strategy["reason"].append("Large screen")
+        strategy["reason"].append("Large screen (>1200px) + manageable dataset -> page size 100")
 
     return strategy
 
-# -----------------------------
-# CSV/Type helpers
-# -----------------------------
+
+# =====================================================
+# RESPONSIVE LAYOUT AGENT
+# =====================================================
+def responsive_layout_agent(
+    columns: List[str],
+    col_types: Dict[str, str],
+    viewport_width: int
+) -> Dict[str, Any]:
+
+    strategy = {
+        "layoutMode": "desktop",
+        "priorityColumns": [],
+        "hiddenColumns": [],
+        "reason": []
+    }
+
+    priority_keywords = ["id", "name", "title", "status", "category", "created"]
+
+    priority_cols = [
+        c for c in columns
+        if any(k in c.lower() for k in priority_keywords)
+    ]
+
+    if not priority_cols:
+        priority_cols = columns[:3]
+
+    if viewport_width and viewport_width < 600:
+        strategy["layoutMode"] = "mobile"
+        strategy["priorityColumns"] = priority_cols[:2]
+        strategy["hiddenColumns"] = [
+            c for c in columns if c not in strategy["priorityColumns"]
+        ]
+        strategy["reason"].append("Mobile viewport (<600px)")
+
+    elif viewport_width and viewport_width < 1024:
+        strategy["layoutMode"] = "tablet"
+        strategy["priorityColumns"] = priority_cols[:4]
+        strategy["hiddenColumns"] = [
+            c for c in columns if c not in strategy["priorityColumns"]
+        ]
+        strategy["reason"].append("Tablet viewport (<1024px)")
+
+    else:
+        strategy["layoutMode"] = "desktop"
+        strategy["priorityColumns"] = columns
+        strategy["hiddenColumns"] = []
+        strategy["reason"].append("Desktop viewport (>=1024px)")
+
+    return strategy
+
+
+# =====================================================
+# ADAPTIVE FILTER AGENT  ← NEW
+# =====================================================
+def analyze_dataset_for_filters(
+    cur,
+    dataset_id: str,
+    columns: List[str],
+    col_types: Dict[str, str],
+    total_rows: int
+) -> List[Dict[str, Any]]:
+    """
+    Analyse every column and decide what kind of filter widget
+    (if any) makes sense.
+
+    Rules:
+        datetime                          -> date_range   (two date pickers)
+        text     + 2 <= distinct <= 30    -> enum         (dropdown)
+        text     + distinct > 30          -> text_search  (free-text input)
+        int/float + 2 <= distinct <= 15   -> enum         (dropdown)
+        int/float + distinct > 15         -> range        (min / max inputs)
+        anything  + distinct < 2          -> skip
+    """
+
+    SAMPLE_LIMIT = 50_000          # cap for huge tables
+    filters: List[Dict[str, Any]] = []
+
+    for col in columns:
+        col_type = col_types.get(col, "text")
+
+        # ── distinct count ──────────────────────────────
+        if total_rows > SAMPLE_LIMIT:
+            cur.execute(
+                f"""
+                SELECT COUNT(DISTINCT val) FROM (
+                    SELECT row_json->>%s AS val
+                    FROM {ROWS_TBL}
+                    WHERE dataset_id = %s
+                    LIMIT %s
+                ) sub
+                WHERE val IS NOT NULL AND val <> ''
+                """,
+                (col, dataset_id, SAMPLE_LIMIT)
+            )
+        else:
+            cur.execute(
+                f"""
+                SELECT COUNT(DISTINCT row_json->>%s)
+                FROM {ROWS_TBL}
+                WHERE dataset_id = %s
+                  AND row_json->>%s IS NOT NULL
+                  AND row_json->>%s <> ''
+                """,
+                (col, dataset_id, col, col)
+            )
+        distinct_count: int = cur.fetchone()[0]
+
+        # skip columns that can't filter anything
+        if distinct_count < 2:
+            continue
+
+        # ── decide filter type ──────────────────────────
+        if col_type == "datetime":
+            filters.append({
+                "column": col,
+                "label": col.replace("_", " ").title(),
+                "filterType": "date_range",
+                "distinctCount": distinct_count
+            })
+
+        elif col_type == "text":
+            if distinct_count <= 30:
+                # fetch actual values for dropdown options
+                cur.execute(
+                    f"""
+                    SELECT DISTINCT row_json->>%s AS val
+                    FROM {ROWS_TBL}
+                    WHERE dataset_id = %s
+                      AND row_json->>%s IS NOT NULL
+                      AND row_json->>%s <> ''
+                    ORDER BY val
+                    LIMIT 30
+                    """,
+                    (col, dataset_id, col, col)
+                )
+                options = [r[0] for r in cur.fetchall()]
+                filters.append({
+                    "column": col,
+                    "label": col.replace("_", " ").title(),
+                    "filterType": "enum",
+                    "options": options,
+                    "distinctCount": distinct_count
+                })
+            else:
+                filters.append({
+                    "column": col,
+                    "label": col.replace("_", " ").title(),
+                    "filterType": "text_search",
+                    "distinctCount": distinct_count
+                })
+
+        elif col_type in ("int", "float"):
+            if distinct_count <= 15:
+                cur.execute(
+                    f"""
+                    SELECT DISTINCT row_json->>%s AS val
+                    FROM {ROWS_TBL}
+                    WHERE dataset_id = %s
+                      AND row_json->>%s IS NOT NULL
+                      AND row_json->>%s <> ''
+                    ORDER BY val
+                    LIMIT 15
+                    """,
+                    (col, dataset_id, col, col)
+                )
+                options = [r[0] for r in cur.fetchall()]
+                filters.append({
+                    "column": col,
+                    "label": col.replace("_", " ").title(),
+                    "filterType": "enum",
+                    "options": options,
+                    "distinctCount": distinct_count
+                })
+            else:
+                cur.execute(
+                    f"""
+                    SELECT
+                        MIN(NULLIF(row_json->>%s, ''))::numeric,
+                        MAX(NULLIF(row_json->>%s, ''))::numeric
+                    FROM {ROWS_TBL}
+                    WHERE dataset_id = %s
+                    """,
+                    (col, col, dataset_id)
+                )
+                row = cur.fetchone()
+                min_val = float(row[0]) if row[0] is not None else None
+                max_val = float(row[1]) if row[1] is not None else None
+
+                if min_val is not None and max_val is not None and min_val != max_val:
+                    filters.append({
+                        "column": col,
+                        "label": col.replace("_", " ").title(),
+                        "filterType": "range",
+                        "min": min_val,
+                        "max": max_val,
+                        "distinctCount": distinct_count
+                    })
+
+    return filters
+
+
+# =====================================================
+# DB Helpers
+# =====================================================
+def get_conn():
+    return psycopg2.connect(DATABASE_URL)
+
+
 def infer_type(values: List[str]) -> str:
-    """
-    Simple inference: int -> float -> datetime -> text
-    """
-    cleaned = [v for v in values if v is not None and str(v).strip() != ""]
+    """Infer column type from up to 200 sample values."""
+    cleaned = [v for v in values if v and str(v).strip()]
     if not cleaned:
         return "text"
 
@@ -113,599 +323,308 @@ def infer_type(values: List[str]) -> str:
         for v in cleaned[:200]:
             int(v)
         return "int"
-    except Exception:
+    except (ValueError, TypeError):
         pass
 
     try:
         for v in cleaned[:200]:
             float(v)
         return "float"
-    except Exception:
+    except (ValueError, TypeError):
         pass
 
-    dt_formats = [
-        "%Y-%m-%d",
-        "%Y-%m-%d %H:%M:%S",
-        "%Y-%m-%dT%H:%M:%S",
-        "%Y-%m-%dT%H:%M:%S.%f",
-    ]
-
-    def can_parse(s: str) -> bool:
-        s = str(s).strip()
-        for fmt in dt_formats:
-            try:
-                datetime.strptime(s, fmt)
-                return True
-            except Exception:
-                continue
-        return False
-
-    sample = [v for v in cleaned[:100] if str(v).strip() != ""]
-    if sample and all(can_parse(v) for v in sample):
+    is_datetime = True
+    for v in cleaned[:100]:
+        try:
+            datetime.fromisoformat(str(v))
+        except (ValueError, TypeError):
+            is_datetime = False
+            break
+    if is_datetime:
         return "datetime"
 
     return "text"
 
-def build_search_text(row: Dict[str, Any], cols: List[str]) -> str:
-    return " ".join(str(row.get(c, "") or "") for c in cols)
 
-def safe_colname(col: str, allowed_cols: List[str]) -> str:
-    return col if col in allowed_cols else (allowed_cols[0] if allowed_cols else "")
+def build_search_text(row: dict, cols: List[str]) -> str:
+    return " ".join(str(row.get(c, "")) for c in cols)
 
-# -----------------------------
-# Adaptive Filtering Agent infra
-# -----------------------------
-def bump_filter_usage(conn, dataset_id: str, cols_used: List[str]):
-    if not cols_used:
-        return
-    cur = conn.cursor()
-    for col in cols_used:
-        cur.execute(
-            f"""
-            INSERT INTO {USAGE_TBL}(dataset_id, col_name, used_count, last_used_at)
-            VALUES (%s,%s,1,now())
-            ON CONFLICT (dataset_id, col_name)
-            DO UPDATE SET
-              used_count = {USAGE_TBL}.used_count + 1,
-              last_used_at = now()
-            """,
-            (dataset_id, col)
-        )
 
-def compute_and_store_column_stats(conn, dataset_id: str, allowed_cols: List[str], col_types: Dict[str, str]):
-    """
-    Compute lightweight stats:
-    - distinct_count, null_count, total_count
-    - top_values (for enum-like columns)
-    Stored in datasets.dataset_column_stats
-    """
-    cur = conn.cursor()
+def safe_colname(col: str, allowed: List[str]) -> str:
+    col = col.strip() if col else ""
+    return col if col in allowed else allowed[0]
 
-    cur.execute(f"SELECT COUNT(*) FROM {ROWS_TBL} WHERE dataset_id=%s", (dataset_id,))
-    total_count = cur.fetchone()[0] or 0
 
-    for col in allowed_cols:
-        # Null/empty count
-        cur.execute(
-            f"""
-            SELECT COUNT(*)
-            FROM {ROWS_TBL}
-            WHERE dataset_id=%s AND (row_json->>%s IS NULL OR btrim(row_json->>%s) = '')
-            """,
-            (dataset_id, col, col)
-        )
-        null_count = cur.fetchone()[0] or 0
-
-        # Distinct count (non-empty)
-        cur.execute(
-            f"""
-            SELECT COUNT(DISTINCT row_json->>%s)
-            FROM {ROWS_TBL}
-            WHERE dataset_id=%s AND btrim(COALESCE(row_json->>%s,'')) <> ''
-            """,
-            (col, dataset_id, col)
-        )
-        distinct_count = cur.fetchone()[0] or 0
-
-        # Top values if enum-ish
-        top_values: List[str] = []
-        if distinct_count <= 50 and (col_types.get(col, "text") == "text"):
-            cur.execute(
-                f"""
-                SELECT row_json->>%s AS v, COUNT(*) AS c
-                FROM {ROWS_TBL}
-                WHERE dataset_id=%s AND btrim(COALESCE(row_json->>%s,'')) <> ''
-                GROUP BY v
-                ORDER BY c DESC
-                LIMIT 15
-                """,
-                (col, dataset_id, col)
-            )
-            top_values = [r[0] for r in cur.fetchall() if r[0] is not None]
-
-        cur.execute(
-            f"""
-            INSERT INTO {STATS_TBL}(dataset_id, col_name, col_type, distinct_count, null_count, total_count, top_values)
-            VALUES (%s,%s,%s,%s,%s,%s,%s::jsonb)
-            ON CONFLICT (dataset_id, col_name)
-            DO UPDATE SET
-              col_type=EXCLUDED.col_type,
-              distinct_count=EXCLUDED.distinct_count,
-              null_count=EXCLUDED.null_count,
-              total_count=EXCLUDED.total_count,
-              top_values=EXCLUDED.top_values,
-              updated_at=now()
-            """,
-            (dataset_id, col, col_types.get(col, "text"), distinct_count, null_count, total_count, json.dumps(top_values))
-        )
-
-def adaptive_filtering_agent(conn, dataset_id: str) -> Dict[str, Any]:
-    """
-    Suggest best filters using:
-    - column stats (distinct_count, top_values, types)
-    - usage patterns (used_count)
-    """
-    cur = conn.cursor()
-
-    cur.execute(
-        f"""
-        SELECT col_name, col_type, distinct_count, null_count, total_count, top_values
-        FROM {STATS_TBL}
-        WHERE dataset_id=%s
-        """,
-        (dataset_id,)
-    )
-    stats = cur.fetchall()
-
-    cur.execute(
-        f"""
-        SELECT col_name, used_count
-        FROM {USAGE_TBL}
-        WHERE dataset_id=%s
-        """,
-        (dataset_id,)
-    )
-    usage = {r[0]: r[1] for r in cur.fetchall()}
-
-    suggestions = []
-
-    for col_name, col_type, distinct_count, null_count, total_count, top_values in stats:
-        used_count = usage.get(col_name, 0)
-        non_null_ratio = 0 if not total_count else (1 - (null_count / total_count))
-
-        score = 0
-        score += used_count * 3
-        score += 8 if col_type == "datetime" else 0
-        score += 6 if col_type in ("int", "float") else 0
-        score += 8 if distinct_count is not None and distinct_count <= 20 else 0
-        score += 5 if non_null_ratio > 0.7 else 0
-
-        ui_type = "text"
-        config: Dict[str, Any] = {}
-
-        if col_type == "datetime":
-            ui_type = "date_range"
-        elif col_type in ("int", "float"):
-            ui_type = "number_range"
-        elif distinct_count is not None and distinct_count <= 20 and top_values:
-            ui_type = "enum"
-            config["options"] = top_values
-
-        suggestions.append({
-            "column": col_name,
-            "type": ui_type,
-            "score": score,
-            "config": config,
-            "usedCount": used_count,
-            "distinctCount": distinct_count
-        })
-
-    suggestions.sort(key=lambda x: x["score"], reverse=True)
-    top = suggestions[:6]
-    combo = [f["column"] for f in top if f["type"] in ("enum", "date_range")][:3]
-
-    return {"recommendedFilters": top, "recommendedCombo": combo}
-
-# -----------------------------
-# Export helpers
-# -----------------------------
-def sanitize_filename(name: str) -> str:
-    name = name or "export"
-    name = re.sub(r"[^a-zA-Z0-9._-]+", "_", name).strip("_")
-    return name[:80] or "export"
-
-def build_where_and_params(
-    dataset_id: str,
-    allowed_cols: List[str],
-    search_value: str,
-    status: str,
-    category: str,
-    fromDate: str,
-    toDate: str
-) -> Tuple[str, List[Any], bool]:
-    where = ["dataset_id = %s"]
-    params: List[Any] = [dataset_id]
-
-    if status and "status" in allowed_cols:
-        where.append("row_json->>'status' = %s")
-        params.append(status)
-
-    if category and "category" in allowed_cols:
-        where.append("row_json->>'category' = %s")
-        params.append(category)
-
-    if fromDate and "created_at" in allowed_cols:
-        where.append("NULLIF(row_json->>'created_at','')::timestamptz >= %s::timestamptz")
-        params.append(fromDate)
-
-    if toDate and "created_at" in allowed_cols:
-        where.append("NULLIF(row_json->>'created_at','')::timestamptz <= %s::timestamptz")
-        params.append(toDate)
-
-    used_fts = False
-    if search_value and search_value.strip():
-        where.append("search_tsv @@ plainto_tsquery('simple', %s)")
-        params.append(search_value.strip())
-        used_fts = True
-
-    return " AND ".join(where), params, used_fts
-
-# -----------------------------
-# Routes
-# -----------------------------
-@app.get("/")
-def home():
-    return {"message": "AIAG-07 backend running. Go to /docs"}
-
-# -----------------------------
+# =====================================================
 # Upload CSV
-# -----------------------------
+# =====================================================
 @app.post("/api/datasets/upload")
 async def upload_dataset(file: UploadFile = File(...)):
     content = await file.read()
-    text = content.decode("utf-8", errors="ignore")
-
-    reader = csv.DictReader(io.StringIO(text))
+    reader = csv.DictReader(io.StringIO(content.decode("utf-8", errors="ignore")))
     columns = reader.fieldnames or []
-    if not columns:
-        raise HTTPException(status_code=400, detail="CSV must have headers in the first row")
 
-    rows: List[Dict[str, Any]] = []
-    sample_values: Dict[str, List[str]] = {c: [] for c in columns}
+    if not columns:
+        raise HTTPException(400, "CSV must have headers")
+
+    rows = []
+    samples: Dict[str, List[str]] = {c: [] for c in columns}
 
     for i, row in enumerate(reader):
         rows.append(row)
         if i < 300:
             for c in columns:
-                sample_values[c].append(row.get(c, ""))
+                samples[c].append(row.get(c, ""))
 
-    col_types = {c: infer_type(sample_values[c]) for c in columns}
-
-    dataset_id = uuid.uuid4()
-    dataset_name = file.filename or "dataset.csv"
+    col_types = {c: infer_type(samples[c]) for c in columns}
+    dataset_id = str(uuid.uuid4())
 
     conn = get_conn()
     try:
-        conn.autocommit = False
         cur = conn.cursor()
 
         cur.execute(
             f"""
-            INSERT INTO {DATASETS_TBL}(dataset_id, name, columns_json, column_types)
+            INSERT INTO {DATASETS_TBL}
+            (dataset_id, name, columns_json, column_types)
             VALUES (%s, %s, %s::jsonb, %s::jsonb)
             """,
-            (str(dataset_id), dataset_name, json.dumps(columns), json.dumps(col_types)),
+            (dataset_id, file.filename, json.dumps(columns), json.dumps(col_types))
         )
 
-        values = []
-        for r in rows:
-            search_text = build_search_text(r, columns)
-            values.append((str(dataset_id), json.dumps(r), search_text, search_text))
+        values = [
+            (
+                dataset_id,
+                json.dumps(r),
+                build_search_text(r, columns),
+                build_search_text(r, columns)
+            )
+            for r in rows
+        ]
 
         execute_values(
             cur,
             f"""
-            INSERT INTO {ROWS_TBL}(dataset_id, row_json, search_text, search_tsv)
+            INSERT INTO {ROWS_TBL}
+            (dataset_id, row_json, search_text, search_tsv)
             VALUES %s
             """,
             values,
             template="(%s, %s::jsonb, %s, to_tsvector('simple', %s))"
         )
 
-        # compute stats for adaptive filtering
-        compute_and_store_column_stats(conn, str(dataset_id), columns, col_types)
-
         conn.commit()
-    except Exception as e:
-        conn.rollback()
-        raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
+
+        # ── Adaptive Filter Agent — runs AFTER data is committed ──
+        recommended_filters = analyze_dataset_for_filters(
+            cur=cur,
+            dataset_id=dataset_id,
+            columns=columns,
+            col_types=col_types,
+            total_rows=len(rows)
+        )
+
     finally:
         conn.close()
 
     return {
-        "datasetId": str(dataset_id),
-        "name": dataset_name,
+        "datasetId": dataset_id,
         "rows": len(rows),
         "columns": columns,
-        "columnTypes": col_types
+        "columnTypes": col_types,
+        "recommendedFilters": recommended_filters   # ← Adaptive Filter Agent output
     }
 
-# -----------------------------
-# DataTables endpoint
-# -----------------------------
+
+# =====================================================
+# DataTables Endpoint
+# =====================================================
 @app.get("/api/table")
-def datatable_endpoint(
+async def datatable_endpoint(
+    request: Request,                                   # ← raw query params for dynamic filters
     datasetId: str = Query(...),
     draw: int = Query(1),
     start: int = Query(0),
     length: int = Query(25),
+    viewportWidth: int = Query(0),
     search_value: str = Query("", alias="search[value]"),
     order_col_index: int = Query(0, alias="order[0][column]"),
     order_dir: str = Query("asc", alias="order[0][dir]"),
-    status: str = Query(""),
-    category: str = Query(""),
-    fromDate: str = Query(""),
-    toDate: str = Query(""),
-    viewportWidth: int = Query(0),
 ):
-    if length < 1:
-        length = 25
-    if length > 500:
-        length = 500
+    # ── extract dynamic filter params from the raw query string ──
+    raw_filters: Dict[str, str] = {}
+    date_from_filters: Dict[str, str] = {}
+    date_to_filters:   Dict[str, str] = {}
+    range_min_filters: Dict[str, str] = {}
+    range_max_filters: Dict[str, str] = {}
+
+    for key, value in request.query_params.items():
+        if not value or not value.strip():
+            continue
+        val = value.strip()
+
+        if key.startswith("filter_col_"):
+            raw_filters[key[len("filter_col_"):]] = val
+        elif key.startswith("filter_date_from_"):
+            date_from_filters[key[len("filter_date_from_"):]] = val
+        elif key.startswith("filter_date_to_"):
+            date_to_filters[key[len("filter_date_to_"):]] = val
+        elif key.startswith("filter_range_min_"):
+            range_min_filters[key[len("filter_range_min_"):]] = val
+        elif key.startswith("filter_range_max_"):
+            range_max_filters[key[len("filter_range_max_"):]] = val
+
+    # ── cache key (includes every filter dimension) ──────────
+    cache_key = json.dumps({
+        "datasetId": datasetId,
+        "start": start,
+        "length": length,
+        "order": [order_col_index, order_dir],
+        "search": search_value,
+        "viewportWidth": viewportWidth,
+        "filters": raw_filters,
+        "dateFrom": date_from_filters,
+        "dateTo": date_to_filters,
+        "rangeMin": range_min_filters,
+        "rangeMax": range_max_filters,
+    }, sort_keys=True)
+
+    cached = get_cache(cache_key)
+    if cached:
+        return cached
 
     conn = get_conn()
     try:
         cur = conn.cursor()
 
-        cur.execute(f"SELECT columns_json, column_types FROM {DATASETS_TBL} WHERE dataset_id=%s", (datasetId,))
+        # ── load dataset metadata ───────────────────────
+        cur.execute(
+            f"SELECT columns_json, column_types FROM {DATASETS_TBL} WHERE dataset_id=%s",
+            (datasetId,)
+        )
         meta = cur.fetchone()
         if not meta:
-            raise HTTPException(status_code=404, detail="Invalid datasetId")
+            raise HTTPException(404, "Invalid datasetId")
 
-        allowed_cols: List[str] = meta[0] or []
-        col_types: Dict[str, str] = meta[1] or {}
+        allowed_cols: List[str] = meta[0]
+        col_types:   Dict[str, str] = meta[1]
 
-        sort_col = allowed_cols[order_col_index] if (0 <= order_col_index < len(allowed_cols)) else (allowed_cols[0] if allowed_cols else "")
-        sort_col = safe_colname(sort_col, allowed_cols)
-        sort_dir = "ASC" if str(order_dir).lower() == "asc" else "DESC"
+        # ── sort column guard ───────────────────────────
+        if order_col_index < 0 or order_col_index >= len(allowed_cols):
+            order_col_index = 0
+        sort_col = safe_colname(allowed_cols[order_col_index], allowed_cols)
 
-        t = (col_types.get(sort_col) or "text").lower()
-        if t in ("int", "float"):
-            sort_expr = f"NULLIF((row_json->>'{sort_col}'),'')::numeric"
-        elif t == "datetime":
-            sort_expr = f"NULLIF((row_json->>'{sort_col}'),'')::timestamptz"
-        else:
-            sort_expr = f"(row_json->>'{sort_col}')"
+        # ── WHERE clause ────────────────────────────────
+        filters_sql  = ["dataset_id=%s"]
+        params: list = [datasetId]
 
-        where = ["dataset_id = %s"]
-        params: List[Any] = [datasetId]
+        # -- global FTS search --
+        if search_value:
+            filters_sql.append("search_tsv @@ plainto_tsquery('simple', %s)")
+            params.append(search_value)
 
-        if status and "status" in allowed_cols:
-            where.append("row_json->>'status' = %s")
-            params.append(status)
+        # -- dynamic enum / text_search filters --
+        for col_name, col_value in raw_filters.items():
+            if col_name not in allowed_cols:
+                continue                              # whitelist guard
+            col_type = col_types.get(col_name, "text")
+            if col_type in ("int", "float"):
+                filters_sql.append("row_json->>%s = %s")
+            else:
+                filters_sql.append("row_json->>%s ILIKE %s")
+                col_value = f"%{col_value}%"
+            params.extend([col_name, col_value])
 
-        if category and "category" in allowed_cols:
-            where.append("row_json->>'category' = %s")
-            params.append(category)
+        # -- dynamic date_range filters --
+        all_date_cols = set(date_from_filters.keys()) | set(date_to_filters.keys())
+        for col_name in all_date_cols:
+            if col_name not in allowed_cols:
+                continue
+            if col_name in date_from_filters:
+                filters_sql.append("(row_json->>%s)::date >= %s")
+                params.extend([col_name, date_from_filters[col_name]])
+            if col_name in date_to_filters:
+                filters_sql.append("(row_json->>%s)::date <= %s")
+                params.extend([col_name, date_to_filters[col_name]])
 
-        if fromDate and "created_at" in allowed_cols:
-            where.append("NULLIF(row_json->>'created_at','')::timestamptz >= %s::timestamptz")
-            params.append(fromDate)
+        # -- dynamic numeric range filters --
+        all_range_cols = set(range_min_filters.keys()) | set(range_max_filters.keys())
+        for col_name in all_range_cols:
+            if col_name not in allowed_cols:
+                continue
+            if col_name in range_min_filters:
+                filters_sql.append("NULLIF(row_json->>%s, '')::numeric >= %s")
+                params.extend([col_name, range_min_filters[col_name]])
+            if col_name in range_max_filters:
+                filters_sql.append("NULLIF(row_json->>%s, '')::numeric <= %s")
+                params.extend([col_name, range_max_filters[col_name]])
 
-        if toDate and "created_at" in allowed_cols:
-            where.append("NULLIF(row_json->>'created_at','')::timestamptz <= %s::timestamptz")
-            params.append(toDate)
+        where_sql = " AND ".join(filters_sql)
 
-        used_fts = False
-        if search_value and search_value.strip():
-            where.append("search_tsv @@ plainto_tsquery('simple', %s)")
-            params.append(search_value.strip())
-            used_fts = True
+        # ── two separate counts ─────────────────────────
+        cur.execute(
+            f"SELECT COUNT(*) FROM {ROWS_TBL} WHERE dataset_id=%s",
+            (datasetId,)
+        )
+        records_total: int = cur.fetchone()[0]
 
-        where_sql = " AND ".join(where)
+        cur.execute(
+            f"SELECT COUNT(*) FROM {ROWS_TBL} WHERE {where_sql}",
+            params
+        )
+        records_filtered: int = cur.fetchone()[0]
 
-        # counts
-        cur.execute(f"SELECT COUNT(*) FROM {ROWS_TBL} WHERE dataset_id=%s", (datasetId,))
-        records_total = cur.fetchone()[0] or 0
+        # ── safe ORDER BY ───────────────────────────────
+        sort_expr: str = f"(row_json->>'{sort_col}')"
+        if col_types.get(sort_col) in ("int", "float"):
+            sort_expr = f"NULLIF((row_json->>'{sort_col}'), '')::numeric"
+        elif col_types.get(sort_col) == "datetime":
+            sort_expr = f"NULLIF((row_json->>'{sort_col}'), '')::timestamp"
 
-        cur.execute(f"SELECT COUNT(*) FROM {ROWS_TBL} WHERE {where_sql}", tuple(params))
-        records_filtered = cur.fetchone()[0] or 0
+        order_direction = "DESC" if order_dir.strip().lower() == "desc" else "ASC"
 
-        # page query
+        # ── data query ──────────────────────────────────
         query = f"""
             SELECT row_json
             FROM {ROWS_TBL}
             WHERE {where_sql}
-            ORDER BY {sort_expr} {sort_dir} NULLS LAST
+            ORDER BY {sort_expr} {order_direction} NULLS LAST
             LIMIT %s OFFSET %s
         """
-        params_page = params + [int(length), int(start)]
-        cur.execute(query, tuple(params_page))
-        rows = cur.fetchall()
+        cur.execute(query, params + [length, start])
+        data = [r[0] for r in cur.fetchall()]
 
-        data = [r[0] for r in rows]
-        text_cols = sum(1 for _t in col_types.values() if str(_t).lower() == "text")
+        # ── run agents ──────────────────────────────────
+        text_cols = sum(1 for t in col_types.values() if t == "text")
 
-        agent_strategy = performance_strategy_agent(
-            rows=records_total,
+        perf_agent = performance_strategy_agent(
+            rows=records_filtered,
             columns=len(allowed_cols),
             text_columns=text_cols,
-            used_fts=used_fts,
+            used_fts=bool(search_value),
             viewport_width=viewportWidth
         )
 
-        # usage tracking
-        cols_used = []
-        if status and "status" in allowed_cols:
-            cols_used.append("status")
-        if category and "category" in allowed_cols:
-            cols_used.append("category")
-        if (fromDate or toDate) and "created_at" in allowed_cols:
-            cols_used.append("created_at")
-        if search_value and search_value.strip():
-            cols_used.append("__global_search__")
-        bump_filter_usage(conn, datasetId, cols_used)
+        layout_agent = responsive_layout_agent(
+            columns=allowed_cols,
+            col_types=col_types,
+            viewport_width=viewportWidth
+        )
 
-        # adaptive filters
-        adaptive_filters = adaptive_filtering_agent(conn, datasetId)
-
-        agent_insights = {
-            "mode": "server",
-            "usedFTS": used_fts,
-            "datasetRows": records_total,
-            "filteredRows": records_filtered,
-            "sortColumn": sort_col,
-            "sortDir": sort_dir,
-            "viewportWidth": viewportWidth,
-            "agentStrategy": agent_strategy,
-            "adaptiveFilters": adaptive_filters
-        }
-
-        return {
+        # ── assemble response ───────────────────────────
+        response = {
             "draw": draw,
             "recordsTotal": records_total,
             "recordsFiltered": records_filtered,
             "data": data,
-            "agentInsights": agent_insights
+            "agentInsights": {
+                "agentStrategy": perf_agent,
+                "responsiveLayout": layout_agent
+            }
         }
+
+        set_cache(cache_key, response)
+        return response
 
     finally:
         conn.close()
-
-# -----------------------------
-# Export CSV
-# -----------------------------
-@app.get("/api/export/csv")
-def export_csv(
-    datasetId: str = Query(...),
-    status: str = Query(""),
-    category: str = Query(""),
-    fromDate: str = Query(""),
-    toDate: str = Query(""),
-    search_value: str = Query("", alias="search[value]"),
-):
-    conn = get_conn()
-    cur = conn.cursor()
-
-    cur.execute(f"SELECT name, columns_json FROM {DATASETS_TBL} WHERE dataset_id=%s", (datasetId,))
-    meta = cur.fetchone()
-    if not meta:
-        conn.close()
-        raise HTTPException(status_code=404, detail="Invalid datasetId")
-
-    dataset_name, allowed_cols = meta[0], (meta[1] or [])
-
-    where_sql, params, used_fts = build_where_and_params(
-        dataset_id=datasetId,
-        allowed_cols=allowed_cols,
-        search_value=search_value,
-        status=status,
-        category=category,
-        fromDate=fromDate,
-        toDate=toDate
-    )
-
-    filename = sanitize_filename(dataset_name.replace(".csv", "")) + "_export.csv"
-
-    def row_gen():
-        # header
-        yield ",".join([f'"{c.replace("\"","\"\"")}"' for c in allowed_cols]) + "\n"
-
-        export_cur = conn.cursor(name="export_csv_cursor")
-        export_cur.itersize = 2000
-
-        export_cur.execute(
-            f"SELECT row_json FROM {ROWS_TBL} WHERE {where_sql} ORDER BY id ASC",
-            tuple(params),
-        )
-
-        for (row_json,) in export_cur:
-            vals = []
-            for c in allowed_cols:
-                v = row_json.get(c, "")
-                if v is None:
-                    v = ""
-                v = str(v).replace('"', '""')
-                vals.append(f'"{v}"')
-            yield ",".join(vals) + "\n"
-
-        export_cur.close()
-        conn.close()
-
-    headers = {
-        "Content-Disposition": f'attachment; filename="{filename}"',
-        "X-Used-FTS": "true" if used_fts else "false"
-    }
-
-    return StreamingResponse(row_gen(), media_type="text/csv", headers=headers)
-
-# -----------------------------
-# Export Excel
-# -----------------------------
-@app.get("/api/export/excel")
-def export_excel(
-    datasetId: str = Query(...),
-    status: str = Query(""),
-    category: str = Query(""),
-    fromDate: str = Query(""),
-    toDate: str = Query(""),
-    search_value: str = Query("", alias="search[value]"),
-):
-    conn = get_conn()
-    cur = conn.cursor()
-
-    cur.execute(f"SELECT name, columns_json FROM {DATASETS_TBL} WHERE dataset_id=%s", (datasetId,))
-    meta = cur.fetchone()
-    if not meta:
-        conn.close()
-        raise HTTPException(status_code=404, detail="Invalid datasetId")
-
-    dataset_name, allowed_cols = meta[0], (meta[1] or [])
-
-    where_sql, params, used_fts = build_where_and_params(
-        dataset_id=datasetId,
-        allowed_cols=allowed_cols,
-        search_value=search_value,
-        status=status,
-        category=category,
-        fromDate=fromDate,
-        toDate=toDate
-    )
-
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Export"
-    ws.append(allowed_cols)
-
-    export_cur = conn.cursor(name="export_excel_cursor")
-    export_cur.itersize = 2000
-
-    export_cur.execute(
-        f"SELECT row_json FROM {ROWS_TBL} WHERE {where_sql} ORDER BY id ASC",
-        tuple(params),
-    )
-
-    for (row_json,) in export_cur:
-        ws.append([row_json.get(c, "") for c in allowed_cols])
-
-    export_cur.close()
-    conn.close()
-
-    for i, col in enumerate(allowed_cols, start=1):
-        ws.column_dimensions[get_column_letter(i)].width = min(max(len(col) + 2, 12), 40)
-
-    buf = io.BytesIO()
-    wb.save(buf)
-    buf.seek(0)
-
-    filename = sanitize_filename(dataset_name.replace(".csv", "")) + "_export.xlsx"
-    headers = {
-        "Content-Disposition": f'attachment; filename="{filename}"',
-        "X-Used-FTS": "true" if used_fts else "false"
-    }
-
-    return StreamingResponse(
-        buf,
-        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers=headers
-    )
