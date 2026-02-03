@@ -292,11 +292,11 @@
     table.dataTable tbody tr:last-child td:first-child { border-bottom-left-radius:0.75rem; }
     table.dataTable tbody tr:last-child td:last-child { border-bottom-right-radius:0.75rem; }
 
-    .dataTables_wrapper .dataTables_length,.dataTables_wrapper .dataTables_filter { margin-bottom:1.5rem; }
-    .dataTables_wrapper .dataTables_length label,.dataTables_wrapper .dataTables_filter label { font-size:0.9375rem;font-weight:500;color:var(--text-secondary); }
-    .dataTables_wrapper .dataTables_length select,.dataTables_wrapper .dataTables_filter input { padding:0.5rem 0.75rem;border:2px solid var(--border);border-radius:0.5rem;font-family:'DM Sans',sans-serif;margin-left:0.5rem;transition:all 0.3s ease; }
+    .dataTables_wrapper .dataTables_filter { margin-bottom:1.5rem; }
+    .dataTables_wrapper .dataTables_filter label { font-size:0.9375rem;font-weight:500;color:var(--text-secondary); }
+    .dataTables_wrapper .dataTables_filter input { padding:0.5rem 0.75rem;border:2px solid var(--border);border-radius:0.5rem;font-family:'DM Sans',sans-serif;margin-left:0.5rem;transition:all 0.3s ease; }
     .dataTables_wrapper .dataTables_filter input { min-width:250px; }
-    .dataTables_wrapper .dataTables_length select:focus,.dataTables_wrapper .dataTables_filter input:focus { outline:none;border-color:var(--color-dark-teal);box-shadow:0 0 0 3px rgba(122,155,168,0.15); }
+    .dataTables_wrapper .dataTables_filter input:focus { outline:none;border-color:var(--color-dark-teal);box-shadow:0 0 0 3px rgba(122,155,168,0.15); }
     .dataTables_wrapper .dataTables_paginate { margin-top:2rem; }
     .dataTables_wrapper .dataTables_paginate .paginate_button { padding:0.625rem 1.125rem;margin:0 0.25rem;border-radius:0.75rem;border:2px solid rgba(122,155,168,0.25);background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);color:var(--text-primary)!important;font-weight:600;transition:all 0.4s cubic-bezier(0.4,0,0.2,1); }
     .dataTables_wrapper .dataTables_paginate .paginate_button:hover { background:rgba(255,255,255,0.95);border-color:var(--color-dark-teal);color:var(--color-dark-teal)!important;transform:translateY(-3px);box-shadow:0 8px 20px rgba(122,155,168,0.3); }
@@ -788,7 +788,7 @@ function initOrReloadTable() {
     processing:true, serverSide:true, responsive:true, fixedHeader:true,
     deferRender:true, searchDelay:350, pageLength:25,
     lengthMenu:[[10,25,50,100],[10,25,50,100]], stateSave:false,
-    dom:"Blfrtip",
+    dom:"Bfrtip",
     buttons:[
       {extend:"csvHtml5",   text:"📄 CSV",   title:"records_export", exportOptions:{columns:":visible"}},
       {extend:"excelHtml5", text:"📊 Excel", title:"records_export", exportOptions:{columns:":visible"}},
