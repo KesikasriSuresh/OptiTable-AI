@@ -55,1291 +55,369 @@
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
-
-    /* Decorative animated background orbs */
     body::before {
       content: '';
-      position: fixed;
-      top: -10%;
-      right: -5%;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(197, 186, 196, 0.4) 0%, rgba(155, 169, 170, 0.2) 40%, transparent 70%);
-      border-radius: 50%;
-      z-index: 0;
+      position: fixed; top: -10%; right: -5%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(197,186,196,0.4) 0%, rgba(155,169,170,0.2) 40%, transparent 70%);
+      border-radius: 50%; z-index: 0;
       animation: float 20s ease-in-out infinite, pulse-glow 4s ease-in-out infinite;
       filter: blur(60px);
     }
-
     body::after {
       content: '';
-      position: fixed;
-      bottom: -10%;
-      left: -5%;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(122, 155, 168, 0.4) 0%, rgba(87, 112, 122, 0.2) 40%, transparent 70%);
-      border-radius: 50%;
-      z-index: 0;
+      position: fixed; bottom: -10%; left: -5%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(122,155,168,0.4) 0%, rgba(87,112,122,0.2) 40%, transparent 70%);
+      border-radius: 50%; z-index: 0;
       animation: float 15s ease-in-out infinite reverse, pulse-glow 5s ease-in-out infinite;
       filter: blur(60px);
     }
-
     @keyframes float {
-      0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
-      33% { transform: translate(50px, -50px) scale(1.1) rotate(10deg); }
-      66% { transform: translate(-30px, 30px) scale(0.9) rotate(-10deg); }
+      0%, 100% { transform: translate(0,0) scale(1) rotate(0deg); }
+      33% { transform: translate(50px,-50px) scale(1.1) rotate(10deg); }
+      66% { transform: translate(-30px,30px) scale(0.9) rotate(-10deg); }
     }
+    @keyframes pulse-glow { 0%,100%{opacity:0.6} 50%{opacity:0.9} }
 
-    @keyframes pulse-glow {
-      0%, 100% { opacity: 0.6; }
-      50% { opacity: 0.9; }
-    }
-
-    /* Floating particles */
-    .particles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: rgba(222, 220, 220, 0.6);
-      border-radius: 50%;
-      animation: particle-float 15s infinite ease-in-out;
-    }
-
+    .particles { position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0; }
+    .particle { position:absolute;width:4px;height:4px;background:rgba(222,220,220,0.6);border-radius:50%;animation:particle-float 15s infinite ease-in-out; }
     @keyframes particle-float {
-      0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+      0%,100% { transform:translateY(0) translateX(0);opacity:0; }
+      10% { opacity:1; }
+      90% { opacity:1; }
+      100% { transform:translateY(-100vh) translateX(100px);opacity:0; }
     }
 
-    .container { max-width: 1400px; margin: 0 auto; position: relative; z-index: 1; }
-    
-    .header { 
-      margin-bottom: 1.5rem; 
-      animation: slideDown 0.6s ease-out;
-    }
-
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
+    .container { max-width:1400px;margin:0 auto;position:relative;z-index:1; }
+    .header { margin-bottom:1.5rem;animation:slideDown 0.6s ease-out; }
+    @keyframes slideDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
     .header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.5rem;
-      font-weight: 900;
-      background: linear-gradient(135deg, #fff 0%, #DEDCDC 50%, #fff 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 0.375rem;
-      letter-spacing: -0.02em;
-      text-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
-      filter: drop-shadow(0 4px 20px rgba(255, 255, 255, 0.3));
-      animation: title-glow 3s ease-in-out infinite;
+      font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:900;
+      background:linear-gradient(135deg,#fff 0%,#DEDCDC 50%,#fff 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      margin-bottom:0.375rem;letter-spacing:-0.02em;
+      filter:drop-shadow(0 4px 20px rgba(255,255,255,0.3));
+      animation:title-glow 3s ease-in-out infinite;
     }
-
-    @keyframes title-glow {
-      0%, 100% { filter: drop-shadow(0 4px 20px rgba(255, 255, 255, 0.3)); }
-      50% { filter: drop-shadow(0 4px 40px rgba(255, 255, 255, 0.6)); }
-    }
-
+    @keyframes title-glow { 0%,100%{filter:drop-shadow(0 4px 20px rgba(255,255,255,0.3))} 50%{filter:drop-shadow(0 4px 40px rgba(255,255,255,0.6))} }
     .header-subtitle {
-      font-size: 0.9375rem;
-      color: rgba(255, 255, 255, 0.95);
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      font-size:0.9375rem;color:rgba(255,255,255,0.95);font-weight:500;
+      display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;
+      text-shadow:0 2px 10px rgba(0,0,0,0.2);
     }
     .badge-success {
-      background: linear-gradient(135deg, rgba(122, 155, 168, 0.25) 0%, rgba(155, 169, 170, 0.3) 100%);
-      border: 2px solid rgba(122, 155, 168, 0.5);
-      color: white;
-      padding: 0.375rem 0.875rem;
-      border-radius: 2rem;
-      font-size: 0.8125rem;
-      backdrop-filter: blur(10px);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.375rem;
-      box-shadow: 0 4px 12px rgba(122, 155, 168, 0.3);
+      background:linear-gradient(135deg,rgba(122,155,168,0.25),rgba(155,169,170,0.3));
+      border:2px solid rgba(122,155,168,0.5);color:white;padding:0.375rem 0.875rem;
+      border-radius:2rem;font-size:0.8125rem;backdrop-filter:blur(10px);
+      display:inline-flex;align-items:center;gap:0.375rem;
+      box-shadow:0 4px 12px rgba(122,155,168,0.3);
     }
-
     .badge-indicator {
-      width: 8px;
-      height: 8px;
-      background: var(--success);
-      border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
-      box-shadow: 0 0 10px rgba(122, 155, 168, 0.6);
+      width:8px;height:8px;background:var(--success);border-radius:50%;
+      animation:pulse 2s ease-in-out infinite;box-shadow:0 0 10px rgba(122,155,168,0.6);
     }
-
-    @keyframes pulse {
-      0%, 100% { 
-        opacity: 1; 
-        transform: scale(1);
-        box-shadow: 0 0 10px rgba(122, 155, 168, 0.6);
-      }
-      50% { 
-        opacity: 0.7; 
-        transform: scale(1.2);
-        box-shadow: 0 0 20px rgba(122, 155, 168, 0.8);
-      }
-    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);box-shadow:0 0 10px rgba(122,155,168,0.6)} 50%{opacity:0.7;transform:scale(1.2);box-shadow:0 0 20px rgba(122,155,168,0.8)} }
 
     .main-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(30px);
-      border-radius: 2rem;
-      box-shadow: 0 20px 80px rgba(25, 29, 35, 0.15), 
-                  0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-      border: 1px solid rgba(222, 220, 220, 0.3);
-      overflow: hidden;
-      animation: fadeIn 0.8s ease-out 0.4s both;
-      position: relative;
+      background:rgba(255,255,255,0.95);backdrop-filter:blur(30px);border-radius:2rem;
+      box-shadow:0 20px 80px rgba(25,29,35,0.15),0 0 0 1px rgba(255,255,255,0.5) inset;
+      border:1px solid rgba(222,220,220,0.3);overflow:hidden;
+      animation:fadeIn 0.8s ease-out 0.4s both;position:relative;
     }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
+    @keyframes fadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
     .main-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 200px;
-      background: linear-gradient(135deg, rgba(122, 155, 168, 0.12) 0%, rgba(197, 186, 196, 0.12) 100%);
-      z-index: 0;
-      pointer-events: none;
+      content:'';position:absolute;top:0;left:0;right:0;height:200px;
+      background:linear-gradient(135deg,rgba(122,155,168,0.12),rgba(197,186,196,0.12));
+      z-index:0;pointer-events:none;
     }
 
-    .card-header { 
-      padding: 2.5rem; 
-      border-bottom: 2px solid rgba(122, 155, 168, 0.15); 
-      position: relative;
-      z-index: 1;
-    }
-    .card-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-    }
+    .card-header { padding:2.5rem;border-bottom:2px solid rgba(122,155,168,0.15);position:relative;z-index:1; }
+    .card-title { font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:1.5rem; }
+
+    /* ✅ UPLOAD SECTION - SHOW/HIDE LOGIC */
     .upload-section {
-      background: linear-gradient(135deg, rgba(122, 155, 168, 0.08) 0%, rgba(197, 186, 196, 0.08) 100%);
-      border: 2px dashed rgba(122, 155, 168, 0.4);
-      border-radius: 0.875rem;
-      padding: 1rem;
-      margin-bottom: 1.25rem;
-      transition: all 0.3s;
+      background:linear-gradient(135deg,rgba(122,155,168,0.08),rgba(197,186,196,0.08));
+      border:2px dashed rgba(122,155,168,0.4);border-radius:0.875rem;
+      padding:1rem;margin-bottom:1.25rem;transition:all 0.3s;
     }
-    .upload-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.75rem;
-      flex-wrap: wrap;
-      gap: 0.5rem;
+    .upload-section.hidden {
+      display: none;
     }
-    .upload-title { 
-      font-size: 0.9375rem; 
-      font-weight: 600; 
-      display: flex; 
-      align-items: center; 
-      gap: 0.375rem; 
-    }
-    .upload-info { font-size: 0.75rem; color: var(--text-secondary); }
+    .upload-header { display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem; }
+    .upload-title { font-size:0.9375rem;font-weight:600;display:flex;align-items:center;gap:0.375rem; }
+    .upload-info { font-size:0.75rem;color:var(--text-secondary); }
     .upload-drop-zone {
-      width: 100%;
-      padding: 1.5rem 1rem;
-      background: rgba(255, 255, 255, 0.6);
-      border: 2px dashed rgba(122, 155, 168, 0.3);
-      border-radius: 0.75rem;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      margin-bottom: 0.75rem;
+      width:100%;padding:1.5rem 1rem;background:rgba(255,255,255,0.6);
+      border:2px dashed rgba(122,155,168,0.3);border-radius:0.75rem;
+      text-align:center;cursor:pointer;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);margin-bottom:0.75rem;
     }
-    .upload-drop-zone:hover { 
-      background: rgba(255, 255, 255, 0.8); 
-      border-color: var(--color-dark-teal); 
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(122, 155, 168, 0.25);
-    }
-    .upload-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-    .upload-text-primary { font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.25rem; }
-    .upload-text-secondary { font-size: 0.8125rem; color: var(--text-secondary); }
-    .upload-formats { display: flex; gap: 0.375rem; justify-content: center; margin-top: 0.5rem; flex-wrap: wrap; }
-    .format-badge {
-      padding: 0.1875rem 0.5rem;
-      background: rgba(122, 155, 168, 0.15);
-      border-radius: 0.375rem;
-      font-size: 0.6875rem;
-      font-weight: 600;
-      color: var(--color-dark-teal);
-      text-transform: uppercase;
-    }
-    .upload-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .upload-drop-zone:hover { background:rgba(255,255,255,0.8);border-color:var(--color-dark-teal);transform:translateY(-2px);box-shadow:0 8px 24px rgba(122,155,168,0.25); }
+    .upload-drop-zone.dragover { background:rgba(122,155,168,0.1);border-color:var(--color-dark-teal);transform:translateY(-2px);box-shadow:0 8px 24px rgba(122,155,168,0.3); }
+    .upload-icon { font-size:2rem;margin-bottom:0.5rem; }
+    .upload-text-primary { font-size:0.9375rem;font-weight:600;margin-bottom:0.25rem; }
+    .upload-text-secondary { font-size:0.8125rem;color:var(--text-secondary); }
+    .upload-formats { display:flex;gap:0.375rem;justify-content:center;margin-top:0.5rem;flex-wrap:wrap; }
+    .format-badge { padding:0.1875rem 0.5rem;background:rgba(122,155,168,0.15);border-radius:0.375rem;font-size:0.6875rem;font-weight:600;color:var(--color-dark-teal);text-transform:uppercase; }
+    .upload-actions { display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap; }
+
     .btn {
-      padding: 0.625rem 1.25rem;
-      border: none;
-      border-radius: 0.75rem;
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      position: relative;
-      overflow: hidden;
+      padding:0.625rem 1.25rem;border:none;border-radius:0.75rem;font-size:0.875rem;font-weight:600;
+      cursor:pointer;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+      display:inline-flex;align-items:center;gap:0.5rem;position:relative;overflow:hidden;
     }
+    .btn::before { content:'';position:absolute;top:50%;left:50%;width:0;height:0;border-radius:50%;background:rgba(255,255,255,0.3);transform:translate(-50%,-50%);transition:width 0.6s,height 0.6s; }
+    .btn:hover::before { width:300px;height:300px; }
+    .btn-upload { background:var(--gradient-3);color:white;box-shadow:0 8px 24px rgba(122,155,168,0.4); }
+    .btn-upload:hover { transform:translateY(-3px) scale(1.02);box-shadow:0 12px 40px rgba(122,155,168,0.5),0 0 20px rgba(122,155,168,0.3); }
+    .btn-upload:active { transform:translateY(-1px) scale(0.98); }
+    .btn-sample { background:var(--gradient-2);color:white;box-shadow:0 8px 24px rgba(197,186,196,0.4); }
+    .btn-sample:hover { transform:translateY(-3px) scale(1.02);box-shadow:0 12px 40px rgba(197,186,196,0.5),0 0 20px rgba(197,186,196,0.3); }
+    .btn-sample:active { transform:translateY(-1px) scale(0.98); }
+    .btn:disabled { opacity:0.6;cursor:not-allowed;transform:none!important; }
 
-    .btn::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.3);
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
+    .upload-status { width:100%;padding:0.75rem 1rem;background:rgba(255,255,255,0.8);border-radius:0.75rem;display:none;align-items:center;gap:0.75rem;font-size:0.8125rem;margin-top:0.75rem; }
+    .upload-status.show { display:flex; }
+    .upload-status.success { background:rgba(122,155,168,0.15);border:2px solid rgba(122,155,168,0.4); }
+    .upload-status.error { background:rgba(255,59,48,0.15);border:2px solid rgba(255,59,48,0.4); }
+    .upload-status.info { background:rgba(122,155,168,0.08);border:2px solid rgba(122,155,168,0.25); }
+    .upload-hidden-input { display:none; }
+    
+    /* ✅ FILE INFO - ALWAYS VISIBLE AFTER UPLOAD */
+    .file-info { 
+      display:none;
+      align-items:center;gap:0.75rem;padding:0.75rem 1rem;
+      background:rgba(255,255,255,0.6);border-radius:0.75rem;
+      margin-bottom:1.25rem;font-size:0.8125rem;
     }
+    .file-info.show { display:flex; }
+    .file-info-details { flex:1; }
+    .file-info-name { font-weight:600;margin-bottom:0.125rem; }
+    .file-info-meta { font-size:0.75rem;color:var(--text-secondary); }
+    .file-info-remove { 
+      background:rgba(255,59,48,0.15);color:#FF3B30;border:none;
+      padding:0.375rem 0.75rem;border-radius:0.375rem;font-weight:600;
+      cursor:pointer;font-size:0.75rem;transition:all 0.3s;
+    }
+    .file-info-remove:hover {
+      background:rgba(255,59,48,0.25);transform:scale(1.05);
+    }
+    .progress-container { width:100%;height:4px;background:rgba(122,155,168,0.2);border-radius:2px;overflow:hidden;margin-top:0.5rem;display:none; }
+    .progress-container.show { display:block; }
+    .progress-bar { height:100%;background:var(--gradient-3);transition:width 0.2s ease;width:0%; }
 
-    .btn:hover::before {
-      width: 300px;
-      height: 300px;
-    }
-
-    .btn-upload { 
-      background: var(--gradient-3); 
-      color: white; 
-      box-shadow: 0 8px 24px rgba(122, 155, 168, 0.4); 
-    }
-    .btn-upload:hover { 
-      transform: translateY(-3px) scale(1.02); 
-      box-shadow: 0 12px 40px rgba(122, 155, 168, 0.5),
-                  0 0 20px rgba(122, 155, 168, 0.3); 
-    }
-    .btn-upload:active {
-      transform: translateY(-1px) scale(0.98);
-    }
-    .btn-sample { 
-      background: var(--gradient-2); 
-      color: white; 
-      box-shadow: 0 8px 24px rgba(197, 186, 196, 0.4); 
-    }
-    .btn-sample:hover { 
-      transform: translateY(-3px) scale(1.02); 
-      box-shadow: 0 12px 40px rgba(197, 186, 196, 0.5),
-                  0 0 20px rgba(197, 186, 196, 0.3); 
-    }
-    .btn-sample:active {
-      transform: translateY(-1px) scale(0.98);
-    }
-    .btn:disabled { 
-      opacity: 0.6; 
-      cursor: not-allowed; 
-      transform: none !important; 
-    }
-    .upload-status {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 0.75rem;
-      display: none;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.8125rem;
-      margin-top: 0.75rem;
-    }
-    .upload-status.show { display: flex; }
-    .upload-status.success { background: rgba(122, 155, 168, 0.15); border: 2px solid rgba(122, 155, 168, 0.4); }
-    .upload-status.error { background: rgba(255, 59, 48, 0.15); border: 2px solid rgba(255, 59, 48, 0.4); }
-    .upload-hidden-input { display: none; }
-    .file-info {
-      display: none;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1rem;
-      background: rgba(255, 255, 255, 0.6);
-      border-radius: 0.75rem;
-      margin-top: 0.75rem;
-      font-size: 0.8125rem;
-    }
-    .file-info.show { display: flex; }
-    .file-info-details { flex: 1; }
-    .file-info-name { font-weight: 600; margin-bottom: 0.125rem; }
-    .file-info-meta { font-size: 0.75rem; color: var(--text-secondary); }
-    .file-info-remove {
-      background: rgba(255, 59, 48, 0.15);
-      color: #FF3B30;
-      border: none;
-      padding: 0.375rem 0.75rem;
-      border-radius: 0.375rem;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 0.75rem;
-    }
-    .progress-container {
-      width: 100%;
-      height: 4px;
-      background: rgba(122, 155, 168, 0.2);
-      border-radius: 2px;
-      overflow: hidden;
-      margin-top: 0.5rem;
+    /* ─── DYNAMIC FILTERS ─── */
+    .filters-section {
       display: none;
     }
-    .progress-container.show { display: block; }
-    .progress-bar { height: 100%; background: var(--gradient-3); transition: width 0.2s ease; width: 0%; }
-
+    .filters-section.show {
+      display: block;
+    }
     .filters-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:1rem;margin-bottom:1.5rem;
+    }
+    .filters-placeholder {
+      grid-column:1/-1;text-align:center;color:var(--text-secondary);
+      font-size:0.875rem;font-style:italic;padding:0.75rem 0;
     }
     .filter-label {
-      display: block;
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      display:block;font-size:0.8125rem;font-weight:600;color:var(--text-secondary);
+      margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em;
     }
     .filter-input {
-      width: 100%;
-      padding: 0.875rem 1.25rem;
-      border: 2px solid rgba(122, 155, 168, 0.25);
-      border-radius: 1rem;
-      font-size: 0.9375rem;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(10px);
-      font-family: 'DM Sans', sans-serif;
+      width:100%;padding:0.875rem 1.25rem;border:2px solid rgba(122,155,168,0.25);
+      border-radius:1rem;font-size:0.9375rem;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+      background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);font-family:'DM Sans',sans-serif;
     }
     .filter-input:focus {
-      outline: none;
-      border-color: var(--color-dark-teal);
-      background: white;
-      box-shadow: 0 0 0 4px rgba(122, 155, 168, 0.15),
-                  0 8px 24px rgba(122, 155, 168, 0.25);
-      transform: translateY(-2px);
+      outline:none;border-color:var(--color-dark-teal);background:white;
+      box-shadow:0 0 0 4px rgba(122,155,168,0.15),0 8px 24px rgba(122,155,168,0.25);
+      transform:translateY(-2px);
     }
-    .filter-input::placeholder {
-      color: #9ca3af;
-      transition: all 0.3s ease;
+    .filter-input::placeholder { color:#9ca3af;transition:all 0.3s ease; }
+    .filter-input:focus::placeholder { transform:translateX(5px);opacity:0.7; }
+    select.filter-input { appearance:auto;padding-right:2rem; }
+
+    .date-range-row { display:flex;gap:0.5rem;align-items:center; }
+    .date-range-row .filter-input { flex:1;min-width:0; }
+    .date-range-sep { font-size:0.8125rem;color:var(--text-secondary);font-weight:600;white-space:nowrap; }
+
+    .range-row { display:flex;gap:0.5rem;align-items:center; }
+    .range-row .filter-input { flex:1;min-width:0; }
+    .range-sep { font-size:0.8125rem;color:var(--text-secondary);font-weight:600;white-space:nowrap; }
+
+    .actions-bar { 
+      display:none;
+      gap:0.75rem;flex-wrap:wrap;
     }
-    .filter-input:focus::placeholder {
-      transform: translateX(5px);
-      opacity: 0.7;
+    .actions-bar.show {
+      display: flex;
     }
-    .actions-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; }
     .btn-primary {
-      background: var(--gradient-1);
-      color: white;
-      box-shadow: 0 8px 24px rgba(87, 112, 122, 0.4);
-      padding: 0.75rem 1.5rem;
-      position: relative;
-      overflow: hidden;
+      background:var(--gradient-1);color:white;box-shadow:0 8px 24px rgba(87,112,122,0.4);
+      padding:0.75rem 1.5rem;position:relative;overflow:hidden;
     }
-    .btn-primary::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
-    }
-    .btn-primary:hover::after {
-      width: 400px;
-      height: 400px;
-    }
-    .btn-primary:hover { 
-      transform: translateY(-3px) scale(1.02); 
-      box-shadow: 0 12px 40px rgba(87, 112, 122, 0.5),
-                  0 0 20px rgba(122, 155, 168, 0.3); 
-    }
-    .btn-primary:active {
-      transform: translateY(-1px) scale(0.98);
-    }
+    .btn-primary::after { content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:rgba(255,255,255,0.3);border-radius:50%;transform:translate(-50%,-50%);transition:width 0.6s,height 0.6s; }
+    .btn-primary:hover::after { width:400px;height:400px; }
+    .btn-primary:hover { transform:translateY(-3px) scale(1.02);box-shadow:0 12px 40px rgba(87,112,122,0.5),0 0 20px rgba(122,155,168,0.3); }
+    .btn-primary:active { transform:translateY(-1px) scale(0.98); }
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(10px);
-      color: var(--text-primary);
-      border: 2px solid rgba(122, 155, 168, 0.3);
-      padding: 0.75rem 1.5rem;
-      box-shadow: 0 4px 12px rgba(25, 29, 35, 0.1);
+      background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);color:var(--text-primary);
+      border:2px solid rgba(122,155,168,0.3);padding:0.75rem 1.5rem;box-shadow:0 4px 12px rgba(25,29,35,0.1);
     }
-    .btn-secondary:hover { 
-      background: rgba(255, 255, 255, 0.95); 
-      border-color: var(--color-dark-teal); 
-      transform: translateY(-3px); 
-      box-shadow: 0 8px 24px rgba(122, 155, 168, 0.3);
-    }
-    .btn-secondary:active {
-      transform: translateY(-1px) scale(0.98);
-    }
+    .btn-secondary:hover { background:rgba(255,255,255,0.95);border-color:var(--color-dark-teal);transform:translateY(-3px);box-shadow:0 8px 24px rgba(122,155,168,0.3); }
+    .btn-secondary:active { transform:translateY(-1px) scale(0.98); }
 
-    .table-container { padding: 2rem; position: relative; }
-    table.dataTable { 
-      width: 100% !important; 
-      border-collapse: separate; 
-      border-spacing: 0; 
-      font-size: 0.9375rem; 
-    }
-    table.dataTable thead th {
-      background: var(--gradient-1);
-      color: white;
-      font-weight: 600;
-      padding: 1.5rem 1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 0.8125rem;
-      white-space: nowrap;
-      position: relative;
-      border: none;
-      box-shadow: 0 4px 12px rgba(87, 112, 122, 0.3);
-    }
-
-    table.dataTable thead th::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
-      animation: shimmer 3s ease-in-out infinite;
-    }
-
-    @keyframes shimmer {
-      0%, 100% { opacity: 0; }
-      50% { opacity: 1; }
-    }
-
-    table.dataTable thead th:first-child {
-      border-top-left-radius: 0.75rem;
-    }
-
-    table.dataTable thead th:last-child {
-      border-top-right-radius: 0.75rem;
-    }
-
-    table.dataTable tbody td { 
-      padding: 1.25rem 1rem; 
-      border-bottom: 1px solid var(--border); 
-      vertical-align: middle;
-    }
-    table.dataTable tbody tr { 
-      background: rgba(255, 255, 255, 0.6); 
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-      backdrop-filter: blur(5px);
-    }
-    table.dataTable tbody tr:hover {
-      background: linear-gradient(90deg, rgba(122, 155, 168, 0.1) 0%, rgba(197, 186, 196, 0.1) 100%);
-      transform: scale(1.01);
-      box-shadow: 0 8px 24px rgba(122, 155, 168, 0.18),
-                  0 0 0 2px rgba(122, 155, 168, 0.12);
-    }
-
-    table.dataTable tbody tr:last-child td:first-child {
-      border-bottom-left-radius: 0.75rem;
-    }
-
-    table.dataTable tbody tr:last-child td:last-child {
-      border-bottom-right-radius: 0.75rem;
-    }
-
-    /* DataTables wrapper elements */
-    .dataTables_wrapper .dataTables_length,
-    .dataTables_wrapper .dataTables_filter {
-      margin-bottom: 1.5rem;
-    }
-
-    .dataTables_wrapper .dataTables_length label,
-    .dataTables_wrapper .dataTables_filter label {
-      font-size: 0.9375rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-    }
-
-    .dataTables_wrapper .dataTables_length select,
-    .dataTables_wrapper .dataTables_filter input {
-      padding: 0.5rem 0.75rem;
-      border: 2px solid var(--border);
-      border-radius: 0.5rem;
-      font-family: 'DM Sans', sans-serif;
-      margin-left: 0.5rem;
-      transition: all 0.3s ease;
-    }
-
-    .dataTables_wrapper .dataTables_filter input {
-      min-width: 250px;
-    }
-
-    .dataTables_wrapper .dataTables_length select:focus,
-    .dataTables_wrapper .dataTables_filter input:focus {
-      outline: none;
-      border-color: var(--color-dark-teal);
-      box-shadow: 0 0 0 3px rgba(122, 155, 168, 0.15);
-    }
-
-    /* Pagination */
-    .dataTables_wrapper .dataTables_paginate {
-      margin-top: 2rem;
-    }
-
-    .dataTables_wrapper .dataTables_paginate .paginate_button {
-      padding: 0.625rem 1.125rem;
-      margin: 0 0.25rem;
-      border-radius: 0.75rem;
-      border: 2px solid rgba(122, 155, 168, 0.25);
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(10px);
-      color: var(--text-primary) !important;
-      font-weight: 600;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-      background: rgba(255, 255, 255, 0.95);
-      border-color: var(--color-dark-teal);
-      color: var(--color-dark-teal) !important;
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(122, 155, 168, 0.3);
-    }
-
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-      background: var(--gradient-1);
-      border-color: transparent;
-      color: white !important;
-      box-shadow: 0 8px 24px rgba(87, 112, 122, 0.4);
-      transform: translateY(-2px);
-    }
-
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-      transform: translateY(-4px) scale(1.05);
-      box-shadow: 0 12px 32px rgba(87, 112, 122, 0.5);
-    }
-
-    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
-      transform: none;
-      box-shadow: none;
-      border-color: rgba(122, 155, 168, 0.25);
-    }
-
-    /* Info Text */
-    .dataTables_wrapper .dataTables_info {
-      font-size: 0.9375rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-      padding-top: 1.5rem;
-    }
-
-    /* Processing Indicator */
-    .dataTables_wrapper .dataTables_processing {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 1rem;
-      padding: 2rem;
-      box-shadow: 0 25px 50px -12px rgba(25, 29, 35, 0.25);
-      border: 2px solid var(--color-dark-teal);
-    }
-
-    /* Export Buttons */
-    .dt-buttons {
-      margin-bottom: 1.5rem;
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .dt-button {
-      padding: 0.75rem 1.5rem !important;
-      border: none !important;
-      border-radius: 1rem !important;
-      font-size: 0.9375rem !important;
-      font-weight: 600 !important;
-      cursor: pointer !important;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      font-family: 'DM Sans', sans-serif !important;
-      color: white !important;
-      position: relative !important;
-      overflow: hidden !important;
-    }
-
-    .dt-button:nth-child(1) {
-      background: var(--gradient-2) !important;
-      box-shadow: 0 8px 20px rgba(197, 186, 196, 0.4) !important;
-    }
-
-    .dt-button:nth-child(2) {
-      background: var(--gradient-4) !important;
-      box-shadow: 0 8px 20px rgba(155, 169, 170, 0.4) !important;
-    }
-
-    .dt-button:nth-child(3) {
-      background: var(--gradient-3) !important;
-      box-shadow: 0 8px 20px rgba(122, 155, 168, 0.4) !important;
-    }
-
-    .dt-button:nth-child(4) {
-      background: var(--gradient-5) !important;
-      box-shadow: 0 8px 20px rgba(222, 220, 220, 0.5) !important;
-    }
-
-    .dt-button::before {
-      content: '' !important;
-      position: absolute !important;
-      top: 50% !important;
-      left: 50% !important;
-      width: 0 !important;
-      height: 0 !important;
-      background: rgba(255, 255, 255, 0.3) !important;
-      border-radius: 50% !important;
-      transform: translate(-50%, -50%) !important;
-      transition: width 0.6s, height 0.6s !important;
-    }
-
-    .dt-button:hover::before {
-      width: 300px !important;
-      height: 300px !important;
-    }
-
-    .dt-button:hover {
-      transform: translateY(-4px) scale(1.05) !important;
-    }
-
-    .dt-button:nth-child(1):hover {
-      box-shadow: 0 12px 32px rgba(197, 186, 196, 0.6) !important;
-    }
-
-    .dt-button:nth-child(2):hover {
-      box-shadow: 0 12px 32px rgba(155, 169, 170, 0.6) !important;
-    }
-
-    .dt-button:nth-child(3):hover {
-      box-shadow: 0 12px 32px rgba(122, 155, 168, 0.6) !important;
-    }
-
-    .dt-button:nth-child(4):hover {
-      box-shadow: 0 12px 32px rgba(222, 220, 220, 0.7) !important;
-    }
-
-    .loading-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(255, 255, 255, 0.95);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 9999;
-      animation: fadeOut 0.5s ease 1s forwards;
-    }
-    @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
-    .loader { width: 60px; height: 60px; border: 4px solid var(--border); border-top-color: var(--color-dark-teal); border-radius: 50%; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Small agent panel under table */
-    .agent-panel {
-      margin-top: 1rem;
-      padding: 1rem;
-      background: rgba(255, 255, 255, 0.7);
-      border: 1px solid rgba(122, 155, 168, 0.25);
-      border-radius: 1rem;
-      font-size: 0.85rem;
-    }
-    .agent-panel pre {
-      margin-top: 0.6rem;
-      white-space: pre-wrap;
-      background: rgba(255,255,255,0.8);
-      padding: 0.75rem;
-      border-radius: 0.75rem;
-      border: 1px solid rgba(0,0,0,0.06);
-      max-height: 260px;
-      overflow: auto;
-      font-size: 0.8rem;
-    }
-
-    /* ========== CHATBOT STYLES ========== */
-    .chatbot-trigger {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #87707A 0%, #ACC9FF 100%);
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 8px 32px rgba(135, 112, 122, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10000;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      animation: chatPulse 2s ease-in-out infinite;
-    }
-
-    @keyframes chatPulse {
-      0%, 100% {
-        transform: scale(1);
-        box-shadow: 0 8px 32px rgba(135, 112, 122, 0.5);
-      }
-      50% {
-        transform: scale(1.05);
-        box-shadow: 0 12px 40px rgba(135, 112, 122, 0.7);
-      }
-    }
-
-    .chatbot-trigger:hover {
-      transform: scale(1.1) rotate(10deg);
-      box-shadow: 0 12px 40px rgba(135, 112, 122, 0.7);
-    }
-
-    .chatbot-trigger:active {
-      transform: scale(0.95);
-    }
-
-    .chatbot-trigger svg {
-      width: 32px;
-      height: 32px;
-      fill: white;
-    }
-
-    .chatbot-notification {
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      width: 24px;
-      height: 24px;
-      background: #FF4444;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 0.75rem;
-      font-weight: 700;
-      border: 3px solid white;
-      animation: bounce 1s ease-in-out infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
-    }
-
-    .chatbot-container {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      width: 400px;
-      max-width: calc(100vw - 2rem);
-      height: 600px;
-      max-height: calc(100vh - 4rem);
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(40px);
-      border-radius: 1.5rem;
-      box-shadow: 0 24px 80px rgba(135, 112, 122, 0.3),
-                  0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-      border: 1px solid rgba(135, 112, 122, 0.2);
+    .table-container { 
+      padding:2rem;position:relative;
       display: none;
-      flex-direction: column;
-      z-index: 10001;
-      overflow: hidden;
-      animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    .table-container.show {
+      display: block;
     }
-
-    .chatbot-container.active {
-      display: flex;
+    table.dataTable { width:100%!important;border-collapse:separate;border-spacing:0;font-size:0.9375rem; }
+    table.dataTable thead th {
+      background:var(--gradient-1);color:white;font-weight:600;padding:1.5rem 1rem;
+      text-transform:uppercase;letter-spacing:0.08em;font-size:0.8125rem;white-space:nowrap;
+      position:relative;border:none;box-shadow:0 4px 12px rgba(87,112,122,0.3);
     }
+    table.dataTable thead th::after { content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5) 50%,transparent);animation:shimmer 3s ease-in-out infinite; }
+    @keyframes shimmer { 0%,100%{opacity:0} 50%{opacity:1} }
+    table.dataTable thead th:first-child { border-top-left-radius:0.75rem; }
+    table.dataTable thead th:last-child { border-top-right-radius:0.75rem; }
+    table.dataTable tbody td { padding:1.25rem 1rem;border-bottom:1px solid var(--border);vertical-align:middle; }
+    table.dataTable tbody tr { background:rgba(255,255,255,0.6);transition:all 0.4s cubic-bezier(0.4,0,0.2,1);backdrop-filter:blur(5px); }
+    table.dataTable tbody tr:hover { background:linear-gradient(90deg,rgba(122,155,168,0.1),rgba(197,186,196,0.1));transform:scale(1.01);box-shadow:0 8px 24px rgba(122,155,168,0.18),0 0 0 2px rgba(122,155,168,0.12); }
+    table.dataTable tbody tr:last-child td:first-child { border-bottom-left-radius:0.75rem; }
+    table.dataTable tbody tr:last-child td:last-child { border-bottom-right-radius:0.75rem; }
 
-    .chatbot-header {
-      padding: 1.25rem 1.5rem;
-      background: linear-gradient(135deg, #87707A 0%, #ACC9FF 100%);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      position: relative;
-      overflow: hidden;
-    }
+    .dataTables_wrapper .dataTables_length,.dataTables_wrapper .dataTables_filter { margin-bottom:1.5rem; }
+    .dataTables_wrapper .dataTables_length label,.dataTables_wrapper .dataTables_filter label { font-size:0.9375rem;font-weight:500;color:var(--text-secondary); }
+    .dataTables_wrapper .dataTables_length select,.dataTables_wrapper .dataTables_filter input { padding:0.5rem 0.75rem;border:2px solid var(--border);border-radius:0.5rem;font-family:'DM Sans',sans-serif;margin-left:0.5rem;transition:all 0.3s ease; }
+    .dataTables_wrapper .dataTables_filter input { min-width:250px; }
+    .dataTables_wrapper .dataTables_length select:focus,.dataTables_wrapper .dataTables_filter input:focus { outline:none;border-color:var(--color-dark-teal);box-shadow:0 0 0 3px rgba(122,155,168,0.15); }
+    .dataTables_wrapper .dataTables_paginate { margin-top:2rem; }
+    .dataTables_wrapper .dataTables_paginate .paginate_button { padding:0.625rem 1.125rem;margin:0 0.25rem;border-radius:0.75rem;border:2px solid rgba(122,155,168,0.25);background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);color:var(--text-primary)!important;font-weight:600;transition:all 0.4s cubic-bezier(0.4,0,0.2,1); }
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover { background:rgba(255,255,255,0.95);border-color:var(--color-dark-teal);color:var(--color-dark-teal)!important;transform:translateY(-3px);box-shadow:0 8px 20px rgba(122,155,168,0.3); }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current { background:var(--gradient-1);border-color:transparent;color:white!important;box-shadow:0 8px 24px rgba(87,112,122,0.4);transform:translateY(-2px); }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover { transform:translateY(-4px) scale(1.05);box-shadow:0 12px 32px rgba(87,112,122,0.5); }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled { opacity:0.4;cursor:not-allowed; }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover { transform:none;box-shadow:none;border-color:rgba(122,155,168,0.25); }
+    .dataTables_wrapper .dataTables_info { font-size:0.9375rem;color:var(--text-secondary);font-weight:500;padding-top:1.5rem; }
+    .dataTables_wrapper .dataTables_processing { background:rgba(255,255,255,0.95);border-radius:1rem;padding:2rem;box-shadow:0 25px 50px -12px rgba(25,29,35,0.25);border:2px solid var(--color-dark-teal); }
 
-    .chatbot-header::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      animation: headerShine 3s ease-in-out infinite;
-    }
+    .dt-buttons { margin-bottom:1.5rem;display:flex;gap:0.75rem;flex-wrap:wrap; }
+    .dt-button { padding:0.75rem 1.5rem!important;border:none!important;border-radius:1rem!important;font-size:0.9375rem!important;font-weight:600!important;cursor:pointer!important;transition:all 0.4s cubic-bezier(0.4,0,0.2,1)!important;font-family:'DM Sans',sans-serif!important;color:white!important;position:relative!important;overflow:hidden!important; }
+    .dt-button:nth-child(1) { background:var(--gradient-2)!important;box-shadow:0 8px 20px rgba(197,186,196,0.4)!important; }
+    .dt-button:nth-child(2) { background:var(--gradient-4)!important;box-shadow:0 8px 20px rgba(155,169,170,0.4)!important; }
+    .dt-button:nth-child(3) { background:var(--gradient-3)!important;box-shadow:0 8px 20px rgba(122,155,168,0.4)!important; }
+    .dt-button:nth-child(4) { background:var(--gradient-5)!important;box-shadow:0 8px 20px rgba(222,220,220,0.5)!important; }
+    .dt-button::before { content:''!important;position:absolute!important;top:50%!important;left:50%!important;width:0!important;height:0!important;background:rgba(255,255,255,0.3)!important;border-radius:50%!important;transform:translate(-50%,-50%)!important;transition:width 0.6s,height 0.6s!important; }
+    .dt-button:hover::before { width:300px!important;height:300px!important; }
+    .dt-button:hover { transform:translateY(-4px) scale(1.05)!important; }
+    .dt-button:nth-child(1):hover { box-shadow:0 12px 32px rgba(197,186,196,0.6)!important; }
+    .dt-button:nth-child(2):hover { box-shadow:0 12px 32px rgba(155,169,170,0.6)!important; }
+    .dt-button:nth-child(3):hover { box-shadow:0 12px 32px rgba(122,155,168,0.6)!important; }
+    .dt-button:nth-child(4):hover { box-shadow:0 12px 32px rgba(222,220,220,0.7)!important; }
 
-    @keyframes headerShine {
-      0%, 100% { left: -100%; }
-      50% { left: 100%; }
-    }
+    .loading-overlay { position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.95);display:flex;align-items:center;justify-content:center;z-index:9999;animation:fadeOut 0.5s ease 1s forwards; }
+    @keyframes fadeOut { to{opacity:0;visibility:hidden} }
+    .loader { width:60px;height:60px;border:4px solid var(--border);border-top-color:var(--color-dark-teal);border-radius:50%;animation:spin 1s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
 
-    .chatbot-header-left {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
+    /* ── chatbot ── */
+    .chatbot-trigger { position:fixed;bottom:2rem;right:2rem;width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#87707A,#ACC9FF);border:none;cursor:pointer;box-shadow:0 8px 32px rgba(135,112,122,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);animation:chatPulse 2s ease-in-out infinite; }
+    @keyframes chatPulse { 0%,100%{transform:scale(1);box-shadow:0 8px 32px rgba(135,112,122,0.5)} 50%{transform:scale(1.05);box-shadow:0 12px 40px rgba(135,112,122,0.7)} }
+    .chatbot-trigger:hover { transform:scale(1.1) rotate(10deg);box-shadow:0 12px 40px rgba(135,112,122,0.7); }
+    .chatbot-trigger:active { transform:scale(0.95); }
+    .chatbot-trigger svg { width:32px;height:32px;fill:white; }
+    .chatbot-notification { position:absolute;top:-5px;right:-5px;width:24px;height:24px;background:#FF4444;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:0.75rem;font-weight:700;border:3px solid white;animation:bounce 1s ease-in-out infinite; }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 
-    .chatbot-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      animation: avatarPulse 2s ease-in-out infinite;
-    }
+    .chatbot-container { position:fixed;bottom:2rem;right:2rem;width:400px;max-width:calc(100vw - 2rem);height:600px;max-height:calc(100vh - 4rem);background:rgba(255,255,255,0.98);backdrop-filter:blur(40px);border-radius:1.5rem;box-shadow:0 24px 80px rgba(135,112,122,0.3),0 0 0 1px rgba(255,255,255,0.5) inset;border:1px solid rgba(135,112,122,0.2);display:none;flex-direction:column;z-index:10001;overflow:hidden;animation:slideUp 0.5s cubic-bezier(0.4,0,0.2,1); }
+    @keyframes slideUp { from{opacity:0;transform:translateY(30px) scale(0.9)} to{opacity:1;transform:translateY(0) scale(1)} }
+    .chatbot-container.active { display:flex; }
+    .chatbot-header { padding:1.25rem 1.5rem;background:linear-gradient(135deg,#87707A,#ACC9FF);color:white;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.2);position:relative;overflow:hidden; }
+    .chatbot-header::before { content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);animation:headerShine 3s ease-in-out infinite; }
+    @keyframes headerShine { 0%,100%{left:-100%} 50%{left:100%} }
+    .chatbot-header-left { display:flex;align-items:center;gap:0.75rem; }
+    .chatbot-avatar { width:40px;height:40px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.2);animation:avatarPulse 2s ease-in-out infinite; }
+    @keyframes avatarPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+    .chatbot-title { font-size:1.125rem;font-weight:700;margin:0; }
+    .chatbot-status { font-size:0.75rem;opacity:0.9;display:flex;align-items:center;gap:0.375rem; }
+    .status-dot { width:8px;height:8px;background:#4CAF50;border-radius:50%;animation:pulse 2s ease-in-out infinite; }
+    .chatbot-close { background:rgba(255,255,255,0.2);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;color:white;font-size:1.25rem; }
+    .chatbot-close:hover { background:rgba(255,255,255,0.3);transform:rotate(90deg); }
+    .chatbot-messages { flex:1;padding:1.5rem;overflow-y:auto;display:flex;flex-direction:column;gap:1rem;background:linear-gradient(135deg,rgba(122,155,168,0.03),rgba(197,186,196,0.03)); }
+    .chatbot-messages::-webkit-scrollbar { width:6px; }
+    .chatbot-messages::-webkit-scrollbar-track { background:rgba(122,155,168,0.1);border-radius:10px; }
+    .chatbot-messages::-webkit-scrollbar-thumb { background:rgba(135,112,122,0.3);border-radius:10px; }
+    .chatbot-messages::-webkit-scrollbar-thumb:hover { background:rgba(135,112,122,0.5); }
+    .message { display:flex;gap:0.75rem;animation:messageSlide 0.4s ease-out; }
+    @keyframes messageSlide { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    .message-avatar { width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#87707A,#ACC9FF);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem;box-shadow:0 4px 12px rgba(135,112,122,0.3); }
+    .message-content { max-width:75%; }
+    .message-bubble { background:rgba(255,255,255,0.9);padding:0.875rem 1.125rem;border-radius:1.125rem 1.125rem 1.125rem 0.25rem;box-shadow:0 4px 16px rgba(0,0,0,0.08);border:1px solid rgba(122,155,168,0.1);line-height:1.5;font-size:0.9375rem;transition:all 0.3s; }
+    .message-bubble:hover { box-shadow:0 6px 20px rgba(0,0,0,0.12);transform:translateY(-1px); }
+    .message-time { font-size:0.6875rem;color:var(--text-secondary);margin-top:0.375rem;opacity:0.7; }
+    .chatbot-suggestions { display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem; }
+    .suggestion-btn { background:linear-gradient(135deg,#87707A,#ACC9FF);color:white;border:none;padding:0.75rem 1.25rem;border-radius:2rem;font-size:0.875rem;font-weight:600;cursor:pointer;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);box-shadow:0 4px 16px rgba(135,112,122,0.3);position:relative;overflow:hidden;text-align:left; }
+    .suggestion-btn::before { content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:rgba(255,255,255,0.3);border-radius:50%;transform:translate(-50%,-50%);transition:width 0.6s,height 0.6s; }
+    .suggestion-btn:hover::before { width:300px;height:300px; }
+    .suggestion-btn:hover { transform:translateY(-2px) scale(1.02);box-shadow:0 8px 24px rgba(135,112,122,0.5); }
+    .suggestion-btn:active { transform:translateY(0) scale(0.98); }
+    .chatbot-input-area { padding:1.25rem;background:white;border-top:1px solid rgba(122,155,168,0.15);display:flex;gap:0.75rem;align-items:center; }
+    .chatbot-input { flex:1;padding:0.875rem 1.25rem;border:2px solid rgba(135,112,122,0.2);border-radius:2rem;font-family:'DM Sans',sans-serif;font-size:0.9375rem;transition:all 0.3s;background:rgba(255,255,255,0.8); }
+    .chatbot-input:focus { outline:none;border-color:#87707A;background:white;box-shadow:0 0 0 4px rgba(135,112,122,0.15);transform:translateY(-1px); }
+    .chatbot-input::placeholder { color:#9ca3af; }
+    .chatbot-send { width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#87707A,#ACC9FF);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);box-shadow:0 4px 16px rgba(135,112,122,0.4);flex-shrink:0; }
+    .chatbot-send:hover { transform:scale(1.1) rotate(15deg);box-shadow:0 6px 24px rgba(135,112,122,0.6); }
+    .chatbot-send:active { transform:scale(0.95); }
+    .chatbot-send svg { width:20px;height:20px;fill:white; }
+    .typing-indicator { display:flex;gap:0.375rem;padding:0.875rem 1.125rem;background:rgba(255,255,255,0.9);border-radius:1.125rem;width:fit-content;box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+    .typing-dot { width:8px;height:8px;background:#87707A;border-radius:50%;animation:typingDot 1.4s ease-in-out infinite; }
+    .typing-dot:nth-child(2) { animation-delay:0.2s; }
+    .typing-dot:nth-child(3) { animation-delay:0.4s; }
+    @keyframes typingDot { 0%,60%,100%{transform:translateY(0);opacity:0.7} 30%{transform:translateY(-10px);opacity:1} }
 
-    @keyframes avatarPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    .chatbot-title {
-      font-size: 1.125rem;
-      font-weight: 700;
-      margin: 0;
-    }
-
-    .chatbot-status {
-      font-size: 0.75rem;
-      opacity: 0.9;
-      display: flex;
-      align-items: center;
-      gap: 0.375rem;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      background: #4CAF50;
-      border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    .chatbot-close {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s;
-      color: white;
-      font-size: 1.25rem;
-    }
-
-    .chatbot-close:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: rotate(90deg);
-    }
-
-    .chatbot-messages {
-      flex: 1;
-      padding: 1.5rem;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      background: linear-gradient(135deg, rgba(122, 155, 168, 0.03) 0%, rgba(197, 186, 196, 0.03) 100%);
-    }
-
-    .chatbot-messages::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .chatbot-messages::-webkit-scrollbar-track {
-      background: rgba(122, 155, 168, 0.1);
-      border-radius: 10px;
-    }
-
-    .chatbot-messages::-webkit-scrollbar-thumb {
-      background: rgba(135, 112, 122, 0.3);
-      border-radius: 10px;
-    }
-
-    .chatbot-messages::-webkit-scrollbar-thumb:hover {
-      background: rgba(135, 112, 122, 0.5);
-    }
-
-    .message {
-      display: flex;
-      gap: 0.75rem;
-      animation: messageSlide 0.4s ease-out;
-    }
-
-    @keyframes messageSlide {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .message-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #87707A 0%, #ACC9FF 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 1rem;
-      box-shadow: 0 4px 12px rgba(135, 112, 122, 0.3);
-    }
-
-    .message-content {
-      max-width: 75%;
-    }
-
-    .message-bubble {
-      background: rgba(255, 255, 255, 0.9);
-      padding: 0.875rem 1.125rem;
-      border-radius: 1.125rem 1.125rem 1.125rem 0.25rem;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-      border: 1px solid rgba(122, 155, 168, 0.1);
-      line-height: 1.5;
-      font-size: 0.9375rem;
-      position: relative;
-      transition: all 0.3s;
-    }
-
-    .message-bubble:hover {
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-      transform: translateY(-1px);
-    }
-
-    .message-time {
-      font-size: 0.6875rem;
-      color: var(--text-secondary);
-      margin-top: 0.375rem;
-      opacity: 0.7;
-    }
-
-    .chatbot-suggestions {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-    }
-
-    .suggestion-btn {
-      background: linear-gradient(135deg, #87707A 0%, #ACC9FF 100%);
-      color: white;
-      border: none;
-      padding: 0.75rem 1.25rem;
-      border-radius: 2rem;
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 16px rgba(135, 112, 122, 0.3);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .suggestion-btn::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
-    }
-
-    .suggestion-btn:hover::before {
-      width: 300px;
-      height: 300px;
-    }
-
-    .suggestion-btn:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 8px 24px rgba(135, 112, 122, 0.5);
-    }
-
-    .suggestion-btn:active {
-      transform: translateY(0) scale(0.98);
-    }
-
-    .chatbot-input-area {
-      padding: 1.25rem;
-      background: white;
-      border-top: 1px solid rgba(122, 155, 168, 0.15);
-      display: flex;
-      gap: 0.75rem;
-      align-items: center;
-    }
-
-    .chatbot-input {
-      flex: 1;
-      padding: 0.875rem 1.25rem;
-      border: 2px solid rgba(135, 112, 122, 0.2);
-      border-radius: 2rem;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.9375rem;
-      transition: all 0.3s;
-      background: rgba(255, 255, 255, 0.8);
-    }
-
-    .chatbot-input:focus {
-      outline: none;
-      border-color: #87707A;
-      background: white;
-      box-shadow: 0 0 0 4px rgba(135, 112, 122, 0.15);
-      transform: translateY(-1px);
-    }
-
-    .chatbot-input::placeholder {
-      color: #9ca3af;
-    }
-
-    .chatbot-send {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #87707A 0%, #ACC9FF 100%);
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 16px rgba(135, 112, 122, 0.4);
-      flex-shrink: 0;
-    }
-
-    .chatbot-send:hover {
-      transform: scale(1.1) rotate(15deg);
-      box-shadow: 0 6px 24px rgba(135, 112, 122, 0.6);
-    }
-
-    .chatbot-send:active {
-      transform: scale(0.95);
-    }
-
-    .chatbot-send svg {
-      width: 20px;
-      height: 20px;
-      fill: white;
-    }
-
-    .typing-indicator {
-      display: flex;
-      gap: 0.375rem;
-      padding: 0.875rem 1.125rem;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 1.125rem;
-      width: fit-content;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    }
-
-    .typing-dot {
-      width: 8px;
-      height: 8px;
-      background: #87707A;
-      border-radius: 50%;
-      animation: typingDot 1.4s ease-in-out infinite;
-    }
-
-    .typing-dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .typing-dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes typingDot {
-      0%, 60%, 100% {
-        transform: translateY(0);
-        opacity: 0.7;
-      }
-      30% {
-        transform: translateY(-10px);
-        opacity: 1;
-      }
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      body {
-        padding: 1rem;
-      }
-
-      .header h1 {
-        font-size: 2rem;
-      }
-
-      .filters-container {
-        grid-template-columns: 1fr;
-      }
-
-      .card-header,
-      .table-container {
-        padding: 1.5rem;
-      }
-
-      .dataTables_wrapper .dataTables_filter input {
-        min-width: 100%;
-        margin-left: 0;
-        margin-top: 0.5rem;
-      }
-
-      table.dataTable {
-        font-size: 0.875rem;
-      }
-
-      table.dataTable thead th,
-      table.dataTable tbody td {
-        padding: 0.875rem 0.5rem;
-      }
-
-      .chatbot-container {
-        width: calc(100vw - 2rem);
-        height: calc(100vh - 4rem);
-        bottom: 1rem;
-        right: 1rem;
-      }
-
-      .chatbot-trigger {
-        bottom: 1.5rem;
-        right: 1.5rem;
-        width: 60px;
-        height: 60px;
-      }
-
-      .chatbot-trigger svg {
-        width: 28px;
-        height: 28px;
-      }
-    }
-
-    /* Tooltip */
-    .tooltip {
-      position: relative;
-      display: inline-block;
-    }
-
-    .tooltip .tooltiptext {
-      visibility: hidden;
-      background-color: var(--color-dark-teal);
-      color: white;
-      text-align: center;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      position: absolute;
-      z-index: 1;
-      bottom: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      font-size: 0.875rem;
-      white-space: nowrap;
-    }
-
-    .tooltip:hover .tooltiptext {
-      visibility: visible;
-      opacity: 1;
+    @media(max-width:768px){
+      body{padding:1rem}
+      .header h1{font-size:2rem}
+      .filters-container{grid-template-columns:1fr}
+      .card-header,.table-container{padding:1.5rem}
+      .dataTables_wrapper .dataTables_filter input{min-width:100%;margin-left:0;margin-top:0.5rem}
+      table.dataTable{font-size:0.875rem}
+      table.dataTable thead th,table.dataTable tbody td{padding:0.875rem 0.5rem}
+      .chatbot-container{width:calc(100vw - 2rem);height:calc(100vh - 4rem);bottom:1rem;right:1rem}
+      .chatbot-trigger{bottom:1.5rem;right:1.5rem;width:60px;height:60px}
+      .chatbot-trigger svg{width:28px;height:28px}
+      .date-range-row,.range-row{flex-direction:column;gap:0.25rem}
     }
   </style>
 </head>
-
 <body>
   <div class="loading-overlay"><div class="loader"></div></div>
 
-  <!-- Animated Particles Background -->
   <div class="particles">
-    <div class="particle" style="left: 10%; animation-delay: 0s; animation-duration: 15s;"></div>
-    <div class="particle" style="left: 20%; animation-delay: 2s; animation-duration: 18s;"></div>
-    <div class="particle" style="left: 30%; animation-delay: 4s; animation-duration: 12s;"></div>
-    <div class="particle" style="left: 40%; animation-delay: 1s; animation-duration: 20s;"></div>
-    <div class="particle" style="left: 50%; animation-delay: 3s; animation-duration: 16s;"></div>
-    <div class="particle" style="left: 60%; animation-delay: 5s; animation-duration: 14s;"></div>
-    <div class="particle" style="left: 70%; animation-delay: 2.5s; animation-duration: 19s;"></div>
-    <div class="particle" style="left: 80%; animation-delay: 4.5s; animation-duration: 13s;"></div>
-    <div class="particle" style="left: 90%; animation-delay: 1.5s; animation-duration: 17s;"></div>
-    <div class="particle" style="left: 15%; animation-delay: 3.5s; animation-duration: 15s;"></div>
-    <div class="particle" style="left: 25%; animation-delay: 0.5s; animation-duration: 21s;"></div>
-    <div class="particle" style="left: 35%; animation-delay: 2.8s; animation-duration: 11s;"></div>
-    <div class="particle" style="left: 45%; animation-delay: 4.2s; animation-duration: 18s;"></div>
-    <div class="particle" style="left: 55%; animation-delay: 1.8s; animation-duration: 16s;"></div>
-    <div class="particle" style="left: 65%; animation-delay: 3.2s; animation-duration: 14s;"></div>
-    <div class="particle" style="left: 75%; animation-delay: 5.5s; animation-duration: 19s;"></div>
-    <div class="particle" style="left: 85%; animation-delay: 0.8s; animation-duration: 13s;"></div>
-    <div class="particle" style="left: 95%; animation-delay: 2.2s; animation-duration: 17s;"></div>
+    <div class="particle" style="left:10%;animation-delay:0s;animation-duration:15s"></div>
+    <div class="particle" style="left:20%;animation-delay:2s;animation-duration:18s"></div>
+    <div class="particle" style="left:30%;animation-delay:4s;animation-duration:12s"></div>
+    <div class="particle" style="left:40%;animation-delay:1s;animation-duration:20s"></div>
+    <div class="particle" style="left:50%;animation-delay:3s;animation-duration:16s"></div>
+    <div class="particle" style="left:60%;animation-delay:5s;animation-duration:14s"></div>
+    <div class="particle" style="left:70%;animation-delay:2.5s;animation-duration:19s"></div>
+    <div class="particle" style="left:80%;animation-delay:4.5s;animation-duration:13s"></div>
+    <div class="particle" style="left:90%;animation-delay:1.5s;animation-duration:17s"></div>
+    <div class="particle" style="left:15%;animation-delay:3.5s;animation-duration:15s"></div>
+    <div class="particle" style="left:25%;animation-delay:0.5s;animation-duration:21s"></div>
+    <div class="particle" style="left:35%;animation-delay:2.8s;animation-duration:11s"></div>
+    <div class="particle" style="left:45%;animation-delay:4.2s;animation-duration:18s"></div>
+    <div class="particle" style="left:55%;animation-delay:1.8s;animation-duration:16s"></div>
+    <div class="particle" style="left:65%;animation-delay:3.2s;animation-duration:14s"></div>
+    <div class="particle" style="left:75%;animation-delay:5.5s;animation-duration:19s"></div>
+    <div class="particle" style="left:85%;animation-delay:0.8s;animation-duration:13s"></div>
+    <div class="particle" style="left:95%;animation-delay:2.2s;animation-duration:17s"></div>
   </div>
 
   <div class="container">
@@ -1347,10 +425,7 @@
       <h1>AIAG 07 - DataTables Optimization</h1>
       <p class="header-subtitle">
         Agentic AI-driven table customization
-        <span class="badge-success">
-          <span class="badge-indicator"></span>
-          AI-Optimized
-        </span>
+        <span class="badge-success"><span class="badge-indicator"></span> AI-Optimized</span>
       </p>
     </div>
 
@@ -1358,153 +433,82 @@
       <div class="card-header">
         <h2 class="card-title">Data Explorer</h2>
 
-        <!-- Upload -->
+        <!-- ✅ UPLOAD SECTION - Hidden after upload -->
         <div class="upload-section" id="uploadSection">
           <div class="upload-header">
             <div class="upload-title"><span>📁</span> Upload Dataset</div>
-            <div class="upload-info"><span>💡</span> CSV supported (backend)</div>
+            <div class="upload-info"><span>💡</span> CSV supported</div>
           </div>
-
           <div class="upload-drop-zone" id="dropZone">
             <div class="upload-icon">☁️</div>
-            <div class="upload-text-primary">Drag & Drop your dataset here</div>
+            <div class="upload-text-primary">Drag &amp; Drop your CSV here</div>
             <div class="upload-text-secondary">or click to browse</div>
-            <div class="upload-formats">
-              <span class="format-badge">CSV</span>
-              <span class="format-badge">Excel</span>
-              <span class="format-badge">JSON</span>
-            </div>
+            <div class="upload-formats"><span class="format-badge">CSV</span></div>
           </div>
-
           <input type="file" id="fileInput" class="upload-hidden-input" accept=".csv,text/csv">
-
           <div class="upload-actions">
             <button class="btn btn-upload" id="btnUpload">📤 Upload</button>
-            <button class="btn btn-sample" id="btnClear">🧹 Clear</button>
           </div>
-
           <div class="upload-status" id="uploadStatus">
             <span id="statusIcon">✅</span>
             <div id="statusText">Ready.</div>
-            <button id="statusClose" style="background:none;border:none;cursor:pointer;">✕</button>
+            <button id="statusClose" style="background:none;border:none;cursor:pointer;font-size:1rem;">✕</button>
           </div>
-
-          <div class="progress-container" id="progressContainer">
-            <div class="progress-bar" id="progressBar"></div>
-          </div>
-
-          <div class="file-info" id="fileInfo">
-            <span>📄</span>
-            <div class="file-info-details">
-              <div class="file-info-name" id="fileName">dataset.csv</div>
-              <div class="file-info-meta" id="fileMeta">—</div>
-            </div>
-            <button class="file-info-remove" id="btnRemoveFile">Remove</button>
-          </div>
+          <div class="progress-container" id="progressContainer"><div class="progress-bar" id="progressBar"></div></div>
         </div>
 
-        <!-- Filters (mapped to backend if columns exist: status, category, created_at) -->
-        <div class="filters-container">
-          <div>
-            <label class="filter-label">Status</label>
-            <input type="text" class="filter-input" id="filterStatus" placeholder="open / closed / in_progress">
+        <!-- ✅ FILE INFO - Shown after upload with Remove button -->
+        <div class="file-info" id="fileInfo">
+          <span>📄</span>
+          <div class="file-info-details">
+            <div class="file-info-name" id="fileName">dataset.csv</div>
+            <div class="file-info-meta" id="fileMeta">—</div>
           </div>
-          <div>
-            <label class="filter-label">Category</label>
-            <input type="text" class="filter-input" id="filterCategory" placeholder="billing / technical / general">
-          </div>
-          <div>
-            <label class="filter-label">From date (created_at)</label>
-            <input type="date" class="filter-input" id="filterFromDate">
-          </div>
-          <div>
-            <label class="filter-label">To date (created_at)</label>
-            <input type="date" class="filter-input" id="filterToDate">
-          </div>
+          <button class="file-info-remove" id="btnRemoveFile">Remove</button>
         </div>
 
-        <div class="actions-bar">
-          <button class="btn btn-primary" id="applyFilters">🔍 Apply Filters</button>
-          <button class="btn btn-secondary" id="resetFilters">↻ Reset</button>
-          <button class="btn btn-secondary" id="refreshData">⟳ Refresh</button>
+        <!-- ✅ FILTERS SECTION - Hidden until upload complete -->
+        <div class="filters-section" id="filtersSection">
+          <div class="filters-container" id="dynamicFiltersContainer">
+            <div class="filters-placeholder">Upload a CSV and filters will appear automatically here.</div>
+          </div>
+
+          <div class="actions-bar" id="actionsBar">
+            <button class="btn btn-primary" id="applyFilters">🔍 Apply Filters</button>
+            <button class="btn btn-secondary" id="resetFilters">↻ Reset</button>
+            <button class="btn btn-secondary" id="refreshData">⟳ Refresh</button>
+          </div>
         </div>
       </div>
 
-      <div class="table-container">
-        <table id="peopleTable" class="display responsive nowrap" style="width:100%">
-          <thead></thead>
-        </table>
-
-        <div class="agent-panel">
-          <div style="font-weight:700; color: var(--text-secondary);">Agent Insights</div>
-          <pre id="agentInsights">{}</pre>
-        </div>
+      <!-- ✅ TABLE CONTAINER - Hidden until upload complete -->
+      <div class="table-container" id="tableContainer">
+        <table id="peopleTable" class="display responsive nowrap" style="width:100%"><thead></thead><tbody></tbody></table>
       </div>
     </div>
   </div>
 
-  <!-- Chatbot Trigger Button -->
+  <!-- Chatbot -->
   <button class="chatbot-trigger" id="chatbotTrigger">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
-    </svg>
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
     <span class="chatbot-notification">1</span>
   </button>
-
-  <!-- Chatbot Container -->
   <div class="chatbot-container" id="chatbotContainer">
     <div class="chatbot-header">
       <div class="chatbot-header-left">
         <div class="chatbot-avatar">🤖</div>
-        <div>
-          <div class="chatbot-title">DataMate</div>
-          <div class="chatbot-status">
-            <span class="status-dot"></span>
-            Online
-          </div>
-        </div>
+        <div><div class="chatbot-title">DataMate</div><div class="chatbot-status"><span class="status-dot"></span> Online</div></div>
       </div>
       <button class="chatbot-close" id="chatbotClose">×</button>
     </div>
-
-    <div class="chatbot-messages" id="chatbotMessages">
-      <div class="message">
-        <div class="message-avatar">🤖</div>
-        <div class="message-content">
-          <div class="message-bubble">
-            <strong>Hi there 👋</strong><br>
-            Welcome to AIAG 07!<br>
-            How can I help you today?
-          </div>
-          <div class="message-time">4:58 PM</div>
-          <div class="chatbot-suggestions">
-            <button class="suggestion-btn" onclick="handleSuggestion('Why is this table slow?')">Why is this table slow?</button>
-            <button class="suggestion-btn" onclick="handleSuggestion('What filters should I apply?')">What filters should I apply?</button>
-            <button class="suggestion-btn" onclick="handleSuggestion('Summarize this dataset')">Summarize this dataset</button>
-            <button class="suggestion-btn" onclick="handleSuggestion('How many records are open?')">How many records are open?</button>
-            <button class="suggestion-btn" onclick="handleSuggestion('Suggest optimal page size')">Suggest optimal page size</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    <div class="chatbot-messages" id="chatbotMessages"></div>
     <div class="chatbot-input-area">
-      <input 
-        type="text" 
-        class="chatbot-input" 
-        id="chatbotInput" 
-        placeholder="Write your message..."
-        onkeypress="handleKeyPress(event)"
-      >
-      <button class="chatbot-send" onclick="sendMessage()">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-        </svg>
-      </button>
+      <input type="text" class="chatbot-input" id="chatbotInput" placeholder="Write your message..." onkeypress="handleKeyPress(event)">
+      <button class="chatbot-send" onclick="sendMessage()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
     </div>
   </div>
 
-  <!-- Scripts -->
+  <!-- libs -->
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
@@ -1516,434 +520,465 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
-  <script>
-    // ---- Backend endpoints (YOUR WORKING ONES)
-    const UPLOAD_URL = "http://127.0.0.1:8000/api/datasets/upload";
-    const TABLE_URL  = "http://127.0.0.1:8000/api/table";
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const UPLOAD_URL = "http://127.0.0.1:8000/api/datasets/upload";
+const TABLE_URL  = "http://127.0.0.1:8000/api/table";
 
-    let datasetId = null;
-    let datasetColumns = [];
-    let selectedFile = null;
-    let table = null;
+let datasetId      = null;
+let datasetColumns = [];
+let selectedFile   = null;
+let table          = null;
+let pendingLayout  = null;
+let filterConfig   = [];
 
-    function setAgentInsights(obj) {
-      document.getElementById("agentInsights").textContent = JSON.stringify(obj || {}, null, 2);
-    }
+// ============================================================
+// UTILITIES
+// ============================================================
+function nowTime() {
+  return new Date().toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit" });
+}
+function showStatus(type, msg) {
+  const el = document.getElementById("uploadStatus");
+  el.className = "upload-status show " + type;
+  document.getElementById("statusIcon").textContent = type==="success"?"✅":type==="error"?"❌":"ℹ️";
+  document.getElementById("statusText").textContent = msg;
+  setTimeout(() => el.classList.remove("show"), 5000);
+}
+function formatFileSize(b) {
+  const k=1024, s=["Bytes","KB","MB","GB"], i=Math.floor(Math.log(b)/Math.log(k));
+  return (Math.round(b/Math.pow(k,i)*100)/100)+" "+s[i];
+}
+function debounce(fn, d) {
+  let t; return function(...a){ clearTimeout(t); t=setTimeout(()=>fn.apply(this,a),d); };
+}
 
-    function showStatus(type, message) {
-      const statusEl = document.getElementById('uploadStatus');
-      statusEl.className = 'upload-status show ' + type;
-      document.getElementById('statusIcon').textContent = type === 'success' ? '✅' : (type === 'error' ? '❌' : 'ℹ️');
-      document.getElementById('statusText').textContent = message;
-      setTimeout(() => statusEl.classList.remove('show'), 5000);
-    }
+// ============================================================
+// PROGRESS BAR
+// ============================================================
+function animateProgressStart() {
+  document.getElementById("progressContainer").classList.add("show");
+  let p=0; const bar=document.getElementById("progressBar"); bar.style.width="0%";
+  const iv=setInterval(()=>{ p+=Math.random()*18; if(p>=90){p=90;clearInterval(iv);} bar.style.width=p+"%"; },180);
+  return ()=>{ clearInterval(iv); bar.style.width="100%"; setTimeout(()=>{ document.getElementById("progressContainer").classList.remove("show"); bar.style.width="0%"; },350); };
+}
 
-    function formatFileSize(bytes) {
-      const k = 1024;
-      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    }
+// ============================================================
+// ✅ SHOW/HIDE UI SECTIONS
+// ============================================================
+function showUploadedState() {
+  // Hide upload section
+  document.getElementById("uploadSection").classList.add("hidden");
+  
+  // Show file info with remove button
+  document.getElementById("fileInfo").classList.add("show");
+  
+  // Show filters section
+  document.getElementById("filtersSection").classList.add("show");
+  document.getElementById("actionsBar").classList.add("show");
+  
+  // Show table container
+  document.getElementById("tableContainer").classList.add("show");
+}
 
-    function animateProgressStart() {
-      document.getElementById('progressContainer').classList.add('show');
-      let progress = 0;
-      const bar = document.getElementById('progressBar');
-      bar.style.width = '0%';
-      const interval = setInterval(() => {
-        progress += Math.random() * 18;
-        if (progress >= 90) { progress = 90; clearInterval(interval); }
-        bar.style.width = progress + '%';
-      }, 180);
-      return () => {
-        clearInterval(interval);
-        bar.style.width = '100%';
-        setTimeout(() => {
-          document.getElementById('progressContainer').classList.remove('show');
-          bar.style.width = '0%';
-        }, 350);
-      };
-    }
+function showInitialState() {
+  // Show upload section
+  document.getElementById("uploadSection").classList.remove("hidden");
+  
+  // Hide file info
+  document.getElementById("fileInfo").classList.remove("show");
+  
+  // Hide filters section
+  document.getElementById("filtersSection").classList.remove("show");
+  document.getElementById("actionsBar").classList.remove("show");
+  
+  // Hide table container
+  document.getElementById("tableContainer").classList.remove("show");
+}
 
-    function applyAgentStrategy(strategy) {
-      if (!strategy) return;
-      console.log("Agent decision:", strategy);
+// ============================================================
+// ADAPTIVE FILTER RENDERING
+// ============================================================
+function renderFilters(config) {
+  filterConfig = config || [];
+  const container = document.getElementById("dynamicFiltersContainer");
+  container.innerHTML = "";
 
-      // update DataTables page size if needed
-      if (table && strategy.pageSize) {
-        const currentLen = table.page.len();
-        if (currentLen !== strategy.pageSize) {
-          table.page.len(strategy.pageSize).draw(false);
-        }
+  if (filterConfig.length === 0) {
+    container.innerHTML = '<div class="filters-placeholder">No filterable columns detected in this dataset.</div>';
+    return;
+  }
+
+  filterConfig.forEach(function(f) {
+    const cell = document.createElement("div");
+    const label = document.createElement("label");
+    label.className = "filter-label";
+    label.textContent = f.label;
+    cell.appendChild(label);
+
+    switch (f.filterType) {
+      case "enum": {
+        const sel = document.createElement("select");
+        sel.className = "filter-input";
+        sel.setAttribute("data-col", f.column);
+        sel.setAttribute("data-ftype", "enum");
+        const ph = document.createElement("option");
+        ph.value = "";
+        ph.textContent = "All " + f.label;
+        sel.appendChild(ph);
+        (f.options || []).forEach(function(val) {
+          const opt = document.createElement("option");
+          opt.value = val;
+          opt.textContent = val;
+          sel.appendChild(opt);
+        });
+        cell.appendChild(sel);
+        break;
+      }
+      case "date_range": {
+        const row = document.createElement("div");
+        row.className = "date-range-row";
+        const fromInput = document.createElement("input");
+        fromInput.type  = "date";
+        fromInput.className = "filter-input";
+        fromInput.setAttribute("data-col",   f.column);
+        fromInput.setAttribute("data-ftype", "date_from");
+        const sep = document.createElement("span");
+        sep.className  = "date-range-sep";
+        sep.textContent = "→";
+        const toInput = document.createElement("input");
+        toInput.type  = "date";
+        toInput.className = "filter-input";
+        toInput.setAttribute("data-col",   f.column);
+        toInput.setAttribute("data-ftype", "date_to");
+        row.appendChild(fromInput);
+        row.appendChild(sep);
+        row.appendChild(toInput);
+        cell.appendChild(row);
+        break;
+      }
+      case "range": {
+        const row = document.createElement("div");
+        row.className = "range-row";
+        const minInput = document.createElement("input");
+        minInput.type  = "number";
+        minInput.className = "filter-input";
+        minInput.setAttribute("data-col",   f.column);
+        minInput.setAttribute("data-ftype", "range_min");
+        minInput.placeholder = "Min" + (f.min != null ? " ("+f.min+")" : "");
+        if (f.min != null) minInput.setAttribute("min", f.min);
+        if (f.max != null) minInput.setAttribute("max", f.max);
+        const sep = document.createElement("span");
+        sep.className  = "range-sep";
+        sep.textContent = "→";
+        const maxInput = document.createElement("input");
+        maxInput.type  = "number";
+        maxInput.className = "filter-input";
+        maxInput.setAttribute("data-col",   f.column);
+        maxInput.setAttribute("data-ftype", "range_max");
+        maxInput.placeholder = "Max" + (f.max != null ? " ("+f.max+")" : "");
+        if (f.min != null) maxInput.setAttribute("min", f.min);
+        if (f.max != null) maxInput.setAttribute("max", f.max);
+        row.appendChild(minInput);
+        row.appendChild(sep);
+        row.appendChild(maxInput);
+        cell.appendChild(row);
+        break;
+      }
+      case "text_search":
+      default: {
+        const inp = document.createElement("input");
+        inp.type  = "text";
+        inp.className = "filter-input";
+        inp.setAttribute("data-col",   f.column);
+        inp.setAttribute("data-ftype", "text_search");
+        inp.placeholder = "Search " + f.label + "…";
+        cell.appendChild(inp);
+        break;
       }
     }
+    container.appendChild(cell);
+  });
+}
 
-    function buildTableHead(cols) {
-      const ths = cols.map(c => `<th>${c}</th>`).join("");
-      $("#peopleTable thead").html(`<tr>${ths}</tr>`);
+function collectFilterParams() {
+  const params = { viewportWidth: window.innerWidth || 0 };
+  const inputs = document.querySelectorAll("#dynamicFiltersContainer [data-col]");
+  inputs.forEach(function(el) {
+    const col   = el.getAttribute("data-col");
+    const ftype = el.getAttribute("data-ftype");
+    const val   = (el.value || "").trim();
+    if (!val) return;
+    switch (ftype) {
+      case "enum":
+      case "text_search":
+        params["filter_col_" + col] = val;
+        break;
+      case "date_from":
+        params["filter_date_from_" + col] = val;
+        break;
+      case "date_to":
+        params["filter_date_to_" + col] = val;
+        break;
+      case "range_min":
+        params["filter_range_min_" + col] = val;
+        break;
+      case "range_max":
+        params["filter_range_max_" + col] = val;
+        break;
     }
+  });
+  return params;
+}
 
-    function getFilterParams() {
-      return {
-        status: $("#filterStatus").val() || "",
-        category: $("#filterCategory").val() || "",
-        fromDate: $("#filterFromDate").val() || "",
-        toDate: $("#filterToDate").val() || "",
-        viewportWidth: window.innerWidth || 0
-      };
+function resetFilterValues() {
+  document.querySelectorAll("#dynamicFiltersContainer [data-col]").forEach(function(el) {
+    el.value = "";
+  });
+}
+
+// ============================================================
+// AGENT APPLICATION
+// ============================================================
+function applyAgentStrategy(strategy) {
+  if (!strategy || !table) return;
+  if (strategy.pageSize) {
+    const cur = table.page.len();
+    if (cur !== strategy.pageSize) table.page.len(strategy.pageSize).draw(false);
+  }
+}
+function applyResponsiveLayout(layout) {
+  if (!layout || !table) return;
+  pendingLayout = layout;
+}
+function flushPendingLayout() {
+  if (!pendingLayout || !table) return;
+  const layout = pendingLayout;
+  pendingLayout = null;
+  try {
+    table.columns().visible(true, false);
+    if (layout.hiddenColumns && layout.hiddenColumns.length) {
+      layout.hiddenColumns.forEach(function(name) {
+        const idx = datasetColumns.indexOf(name);
+        if (idx !== -1) table.column(idx).visible(false, false);
+      });
     }
+    table.columns.adjust().draw(false);
+  } catch(e) { console.warn("[Agent] col-vis error:", e); }
+}
 
-    function initOrReloadTable() {
-      if (!datasetId || !datasetColumns.length) {
-        showStatus("error", "Upload a CSV first to load the table.");
-        return;
-      }
+// ============================================================
+// TABLE
+// ============================================================
+function buildTableHead(cols) {
+  const thead = $("#peopleTable thead");
+  thead.empty();
+  thead.html("<tr>" + cols.map(function(c){ return "<th>"+c+"</th>"; }).join("") + "</tr>");
+}
 
-      if (table) {
-        table.ajax.reload();
-        return;
-      }
+function initOrReloadTable() {
+  if (!datasetId || !datasetColumns.length) { showStatus("error","Upload a CSV first."); return; }
+  if (table) { table.ajax.reload(); return; }
 
-      buildTableHead(datasetColumns);
-      const dtColumns = datasetColumns.map(c => ({ data: c }));
+  buildTableHead(datasetColumns);
 
-      table = $("#peopleTable").DataTable({
-        processing: true,
-        serverSide: true,
-        responsive: true,
-        fixedHeader: true,
-        deferRender: true,
-        searchDelay: 350,
-        pageLength: 25,
-        lengthMenu: [[10,25,50,100],[10,25,50,100]],
-        stateSave: false,
-
-        dom: "Blfrtip",
-        buttons: [
-          { extend: "csvHtml5", text: "📄 CSV",   title: "records_export", exportOptions: { columns: ":visible" } },
-          { extend: "excelHtml5", text: "📊 Excel", title: "records_export", exportOptions: { columns: ":visible" } },
-          { extend: "pdfHtml5", text: "📑 PDF", title: "records_export", exportOptions: { columns: ":visible" } },
-          { extend: "print", text: "🖨️ Print", exportOptions: { columns: ":visible" } }
-        ],
-
-        columns: dtColumns,
-        order: [[0, "asc"]],
-
-        language: {
-          processing: "⚡ Loading intelligent data...",
-          search: "🔍 Search:",
-          lengthMenu: "Show _MENU_ entries per page",
-          info: "Showing _START_ to _END_ of _TOTAL_ records",
-          infoEmpty: "No records available",
-          infoFiltered: "(filtered from _MAX_ total records)",
-          paginate: {
-            first: "⏮️ First",
-            last: "⏭️ Last",
-            next: "Next ▶️",
-            previous: "◀️ Previous"
-          }
-        },
-
-        ajax: function(dtParams, callback) {
-          const filters = getFilterParams();
-          const query = { ...dtParams, ...filters, datasetId };
-
-          $.ajax({
-            url: TABLE_URL,
-            method: "GET",
-            data: query,
-            dataType: "json",
-            success: function(resp) {
-              const insights = resp.agentInsights || {};
-              setAgentInsights(insights);
-
-              if (insights.agentStrategy) {
-                applyAgentStrategy(insights.agentStrategy);
-              }
-
-              callback({
-                draw: resp.draw ?? dtParams.draw,
-                recordsTotal: resp.recordsTotal ?? 0,
-                recordsFiltered: resp.recordsFiltered ?? 0,
-                data: resp.data ?? []
-              });
-            },
-            error: function(xhr) {
-              setAgentInsights({
-                error: true,
-                message: "Table API error",
-                status: xhr.status,
-                response: (xhr.responseText || "").slice(0, 800)
-              });
-              callback({ draw: dtParams.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
-            }
+  table = $("#peopleTable").DataTable({
+    processing:true, serverSide:true, responsive:true, fixedHeader:true,
+    deferRender:true, searchDelay:350, pageLength:25,
+    lengthMenu:[[10,25,50,100],[10,25,50,100]], stateSave:false,
+    dom:"Blfrtip",
+    buttons:[
+      {extend:"csvHtml5",   text:"📄 CSV",   title:"records_export", exportOptions:{columns:":visible"}},
+      {extend:"excelHtml5", text:"📊 Excel", title:"records_export", exportOptions:{columns:":visible"}},
+      {extend:"pdfHtml5",   text:"📑 PDF",   title:"records_export", exportOptions:{columns:":visible"}},
+      {extend:"print",      text:"🖨️ Print",                         exportOptions:{columns:":visible"}}
+    ],
+    columns: datasetColumns.map(function(c){ return {data:c, name:c}; }),
+    order:[[0,"asc"]],
+    language:{
+      processing:"⚡ Loading intelligent data…",
+      search:"🔍 Search:",
+      lengthMenu:"Show _MENU_ entries per page",
+      info:"Showing _START_ to _END_ of _TOTAL_ records",
+      infoEmpty:"No records available",
+      infoFiltered:"(filtered from _MAX_ total records)",
+      paginate:{first:"⏮️ First",last:"⏭️ Last",next:"Next ▶️",previous:"◀️ Previous"}
+    },
+    ajax: function(dtParams, callback) {
+      const filterParams = collectFilterParams();
+      const query = $.extend({}, dtParams, filterParams, { datasetId: datasetId });
+      $.ajax({
+        url:TABLE_URL, method:"GET", data:query, dataType:"json",
+        success: function(resp) {
+          const insights = resp.agentInsights || {};
+          if (insights.agentStrategy)    applyAgentStrategy(insights.agentStrategy);
+          if (insights.responsiveLayout) applyResponsiveLayout(insights.responsiveLayout);
+          callback({
+            draw:            resp.draw            != null ? resp.draw            : dtParams.draw,
+            recordsTotal:    resp.recordsTotal    != null ? resp.recordsTotal    : 0,
+            recordsFiltered: resp.recordsFiltered != null ? resp.recordsFiltered : 0,
+            data:            resp.data            != null ? resp.data            : []
           });
+        },
+        error: function(xhr) {
+          console.error("Table API error:", xhr.status, xhr.responseText);
+          callback({draw:dtParams.draw, recordsTotal:0, recordsFiltered:0, data:[]});
         }
       });
     }
+  });
+  table.on("draw", function(){ flushPendingLayout(); });
+}
 
-    async function uploadSelectedFile() {
-      if (!selectedFile) {
-        showStatus("error", "No file selected.");
-        return;
-      }
+// ============================================================
+// UPLOAD
+// ============================================================
+async function uploadSelectedFile() {
+  if (!selectedFile) { showStatus("error","No file selected."); return; }
+  const ext = "." + selectedFile.name.split(".").pop().toLowerCase();
+  if (ext !== ".csv") { showStatus("error","CSV only. Please upload a .csv file."); return; }
+  const stop = animateProgressStart();
+  $("#btnUpload").prop("disabled", true);
+  try {
+    const form = new FormData();
+    form.append("file", selectedFile);
+    const res = await fetch(UPLOAD_URL, {method:"POST", body:form});
+    if (!res.ok) { const t=await res.text(); throw new Error("Upload failed ("+res.status+"). "+t.slice(0,400)); }
+    const json = await res.json();
+    datasetId      = json.datasetId;
+    datasetColumns = json.columns || [];
+    
+    // Update file info
+    document.getElementById("fileName").textContent = selectedFile.name;
+    document.getElementById("fileMeta").textContent = formatFileSize(selectedFile.size) + " • " + (json.rows||"?") + " rows • " + datasetColumns.length + " columns";
+    
+    if (table) { table.destroy(); table=null; $("#peopleTable").empty().html('<thead></thead><tbody></tbody>'); }
+    renderFilters(json.recommendedFilters);
+    showStatus("success", "Uploaded successfully!");
+    
+    // ✅ Show uploaded state
+    showUploadedState();
+    
+    initOrReloadTable();
+  } catch(e) {
+    showStatus("error", String(e.message || e));
+  } finally {
+    stop();
+    $("#btnUpload").prop("disabled", false);
+  }
+}
 
-      const ext = "." + selectedFile.name.split(".").pop().toLowerCase();
-      if (ext !== ".csv") {
-        showStatus("error", "Backend upload currently supports CSV only. Upload a .csv file.");
-        return;
-      }
+// ✅ Complete reset function - now just reloads the page
+function resetUpload() {
+  // Simply reload the page to completely reset everything
+  window.location.reload();
+}
 
-      const stopProgress = animateProgressStart();
-      $("#btnUpload").prop("disabled", true);
+function handleFileSelect(file) {
+  if (!file) return;
+  selectedFile = file;
+  showStatus("info","File selected: " + file.name + ". Click Upload to continue.");
+}
 
-      try {
-        const form = new FormData();
-        form.append("file", selectedFile);
+// ============================================================
+// CHATBOT
+// ============================================================
+function toggleChatbot() {
+  const c=document.getElementById("chatbotContainer");
+  const n=document.querySelector(".chatbot-notification");
+  if(c.classList.contains("active")){c.classList.remove("active");}
+  else{c.classList.add("active");if(n)n.style.display="none";}
+}
+function sendMessage() {
+  const inp=document.getElementById("chatbotInput"), msg=inp.value.trim();
+  if(!msg)return; addUserMessage(msg); inp.value="";
+  setTimeout(function(){ showTypingIndicator(); setTimeout(function(){ hideTypingIndicator(); addBotMessage(getBotResponse(msg)); },1500); },500);
+}
+function addUserMessage(t) {
+  document.getElementById("chatbotMessages").insertAdjacentHTML("beforeend",
+    '<div class="message" style="flex-direction:row-reverse"><div class="message-content" style="display:flex;flex-direction:column;align-items:flex-end">'+
+    '<div class="message-bubble" style="background:linear-gradient(135deg,#87707A,#ACC9FF);color:white;border-radius:1.125rem 1.125rem 0.25rem 1.125rem">'+t+'</div>'+
+    '<div class="message-time">'+nowTime()+'</div></div></div>');
+  scrollToBottom();
+}
+function addBotMessage(t) {
+  document.getElementById("chatbotMessages").insertAdjacentHTML("beforeend",
+    '<div class="message"><div class="message-avatar">🤖</div><div class="message-content">'+
+    '<div class="message-bubble">'+t+'</div><div class="message-time">'+nowTime()+'</div></div></div>');
+  scrollToBottom();
+}
+function showTypingIndicator() {
+  document.getElementById("chatbotMessages").insertAdjacentHTML("beforeend",
+    '<div class="message typing-message"><div class="message-avatar">🤖</div>'+
+    '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>');
+  scrollToBottom();
+}
+function hideTypingIndicator() { const e=document.querySelector(".typing-message"); if(e)e.remove(); }
+function getBotResponse(raw) {
+  const m=raw.toLowerCase();
+  if(m.includes("slow")||m.includes("performance"))
+    return 'The table might be slow due to:<br>• <strong>Large dataset</strong> — server-side pagination helps<br>• <strong>Many active filters</strong> — try narrowing<br>• <strong>Network latency</strong><br><br>The Performance Strategy Agent auto-tunes page size.';
+  if(m.includes("filter"))
+    return 'Filters are generated <strong>automatically</strong> by the Adaptive Filter Agent after you upload a CSV.<br><br>It analyses each column and shows:<br>• <strong>Dropdowns</strong> for low-cardinality columns<br>• <strong>Date pickers</strong> for date columns<br>• <strong>Min/Max</strong> for numeric ranges<br>• <strong>Text search</strong> for high-cardinality text';
+  if(m.includes("summarize")||m.includes("summary"))
+    return 'After upload the system shows:<br>• Total & filtered record counts<br>• Column types inferred by the backend<br>• Recommended filters based on data shape';
+  if(m.includes("how many")||m.includes("records")||m.includes("count"))
+    return 'Record counts appear in the <strong>Table info bar</strong> — "Showing X to Y of Z"';
+  if(m.includes("page size")||m.includes("optimal"))
+    return 'The Performance Strategy Agent picks page size:<br>• Mobile → 25 rows<br>• Desktop → up to 100 rows<br>• Large datasets → 50 rows<br>You can override with the dropdown.';
+  if(m.includes("hello")||m.includes("hi")||m.includes("hey"))
+    return "Hello! 👋 How can I help you with your data today?";
+  if(m.includes("help")||m.includes("what can"))
+    return 'I can help with:<br>• Performance questions<br>• Filter explanations<br>• Record counts<br>What would you like to know?';
+  return 'Thanks! This chatbot is <strong>heuristic-based</strong> — it doesn\'t query your data directly yet.<br><br>Try the suggestion buttons or ask about filters / performance.';
+}
+function handleSuggestion(t){ document.getElementById("chatbotInput").value=t; sendMessage(); }
+function handleKeyPress(e){ if(e.key==="Enter") sendMessage(); }
+function scrollToBottom(){ const e=document.getElementById("chatbotMessages"); e.scrollTop=e.scrollHeight; }
 
-        const res = await fetch(UPLOAD_URL, { method: "POST", body: form });
-        if (!res.ok) {
-          const txt = await res.text();
-          throw new Error(`Upload failed (${res.status}). ${txt.slice(0, 400)}`);
-        }
+// ============================================================
+// DOM READY
+// ============================================================
+$(document).ready(function(){
+  document.getElementById("chatbotMessages").innerHTML =
+    '<div class="message"><div class="message-avatar">🤖</div><div class="message-content">'+
+    '<div class="message-bubble"><strong>Hi there 👋</strong><br>Welcome to AIAG 07!<br>How can I help you today?</div>'+
+    '<div class="message-time">'+nowTime()+'</div>'+
+    '<div class="chatbot-suggestions">'+
+      '<button class="suggestion-btn" onclick="handleSuggestion(\'Why is this table slow?\')">Why is this table slow?</button>'+
+      '<button class="suggestion-btn" onclick="handleSuggestion(\'What filters should I apply?\')">What filters should I apply?</button>'+
+      '<button class="suggestion-btn" onclick="handleSuggestion(\'Summarize this dataset\')">Summarize this dataset</button>'+
+      '<button class="suggestion-btn" onclick="handleSuggestion(\'How many records are open?\')">How many records are open?</button>'+
+      '<button class="suggestion-btn" onclick="handleSuggestion(\'Suggest optimal page size\')">Suggest optimal page size</button>'+
+    '</div></div></div>';
 
-        const json = await res.json();
-        datasetId = json.datasetId;
-        datasetColumns = json.columns || [];
+  const dz=document.getElementById("dropZone"), fi=document.getElementById("fileInput");
+  dz.addEventListener("click",function(){ fi.click(); });
+  dz.addEventListener("dragover",function(e){e.preventDefault();dz.classList.add("dragover");});
+  dz.addEventListener("dragleave",function(e){e.preventDefault();dz.classList.remove("dragover");});
+  dz.addEventListener("drop",function(e){e.preventDefault();dz.classList.remove("dragover");if(e.dataTransfer.files[0])handleFileSelect(e.dataTransfer.files[0]);});
+  fi.addEventListener("change",function(e){if(e.target.files[0])handleFileSelect(e.target.files[0]);});
+  document.getElementById("btnUpload").addEventListener("click",uploadSelectedFile);
+  document.getElementById("btnRemoveFile").addEventListener("click",resetUpload);
+  document.getElementById("statusClose").addEventListener("click",function(){ document.getElementById("uploadStatus").classList.remove("show"); });
 
-        // reset table if columns changed
-        if (table) {
-          table.destroy();
-          table = null;
-          $("#peopleTable thead").empty();
-        }
+  document.getElementById("chatbotTrigger").addEventListener("click",toggleChatbot);
+  document.getElementById("chatbotClose").addEventListener("click",toggleChatbot);
 
-        showStatus("success", `Uploaded ✓ rows=${json.rows ?? "?"} | datasetId=${datasetId}`);
-        initOrReloadTable();
-      } catch (e) {
-        showStatus("error", String(e.message || e));
-      } finally {
-        stopProgress();
-        $("#btnUpload").prop("disabled", false);
-      }
-    }
+  $("#applyFilters").on("click",function(){ if(table) table.ajax.reload(); });
+  $("#resetFilters").on("click",function(){ resetFilterValues(); if(table) table.ajax.reload(); });
+  
+  // ✅ Updated refresh handler - now reloads the entire page
+  $("#refreshData").on("click",function(){ 
+    window.location.reload();
+  });
 
-    function resetUpload() {
-      selectedFile = null;
-      datasetId = null;
-      datasetColumns = [];
-      setAgentInsights({});
+  window.addEventListener("resize", debounce(function(){ if(table) table.ajax.reload(null,false); }, 300));
 
-      document.getElementById('fileInfo').classList.remove('show');
-      document.getElementById('fileInput').value = '';
-
-      if (table) {
-        table.destroy();
-        table = null;
-        $("#peopleTable thead").empty();
-      }
-      showStatus("info", "Cleared. Upload a CSV to continue.");
-    }
-
-    function handleFileSelect(file) {
-      if (!file) return;
-
-      selectedFile = file;
-
-      document.getElementById('fileName').textContent = file.name;
-      document.getElementById('fileMeta').textContent = `${formatFileSize(file.size)} • Ready to upload`;
-      document.getElementById('fileInfo').classList.add('show');
-
-      showStatus("info", "File selected. Click Upload.");
-    }
-
-    // ========== CHATBOT FUNCTIONS ==========
-    function toggleChatbot() {
-      const container = document.getElementById('chatbotContainer');
-      const trigger = document.getElementById('chatbotTrigger');
-      const notification = trigger.querySelector('.chatbot-notification');
-      
-      if (container.classList.contains('active')) {
-        container.classList.remove('active');
-      } else {
-        container.classList.add('active');
-        if (notification) {
-          notification.style.display = 'none';
-        }
-      }
-    }
-
-    function sendMessage() {
-      const input = document.getElementById('chatbotInput');
-      const message = input.value.trim();
-      
-      if (message === '') return;
-      
-      // Add user message
-      addUserMessage(message);
-      input.value = '';
-      
-      // Simulate bot response
-      setTimeout(() => {
-        showTypingIndicator();
-        setTimeout(() => {
-          hideTypingIndicator();
-          addBotMessage(getBotResponse(message));
-        }, 1500);
-      }, 500);
-    }
-
-    function addUserMessage(text) {
-      const messagesContainer = document.getElementById('chatbotMessages');
-      const time = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-      
-      const messageHTML = `
-        <div class="message" style="flex-direction: row-reverse;">
-          <div class="message-content" style="display: flex; flex-direction: column; align-items: flex-end;">
-            <div class="message-bubble" style="background: linear-gradient(135deg, #87707A 0%, #ACC9FF 100%); color: white; border-radius: 1.125rem 1.125rem 0.25rem 1.125rem;">
-              ${text}
-            </div>
-            <div class="message-time">${time}</div>
-          </div>
-        </div>
-      `;
-      
-      messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
-      scrollToBottom();
-    }
-
-    function addBotMessage(text) {
-      const messagesContainer = document.getElementById('chatbotMessages');
-      const time = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-      
-      const messageHTML = `
-        <div class="message">
-          <div class="message-avatar">🤖</div>
-          <div class="message-content">
-            <div class="message-bubble">
-              ${text}
-            </div>
-            <div class="message-time">${time}</div>
-          </div>
-        </div>
-      `;
-      
-      messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
-      scrollToBottom();
-    }
-
-    function showTypingIndicator() {
-      const messagesContainer = document.getElementById('chatbotMessages');
-      const typingHTML = `
-        <div class="message typing-message">
-          <div class="message-avatar">🤖</div>
-          <div class="typing-indicator">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-          </div>
-        </div>
-      `;
-      messagesContainer.insertAdjacentHTML('beforeend', typingHTML);
-      scrollToBottom();
-    }
-
-    function hideTypingIndicator() {
-      const typingMessage = document.querySelector('.typing-message');
-      if (typingMessage) {
-        typingMessage.remove();
-      }
-    }
-
-    function getBotResponse(userMessage) {
-      const lowerMessage = userMessage.toLowerCase();
-      
-      if (lowerMessage.includes('slow') || lowerMessage.includes('performance')) {
-        return "The table might be slow due to:<br>• Large dataset size<br>• Too many filters applied<br>• Network latency<br><br>Try reducing the page size or applying more specific filters to improve performance.";
-      } else if (lowerMessage.includes('filters') || lowerMessage.includes('filter')) {
-        return "I recommend filtering by:<br>• <strong>Status</strong> - to see open/closed records<br>• <strong>Category</strong> - to narrow by type<br>• <strong>Date range</strong> - to view specific time periods<br><br>Apply filters incrementally for best results!";
-      } else if (lowerMessage.includes('summarize') || lowerMessage.includes('summary')) {
-        return "I can help summarize your dataset! Once you upload a CSV file, I'll analyze:<br>• Total record count<br>• Column types<br>• Data distribution<br>• Key statistics<br><br>Upload a file to get started!";
-      } else if (lowerMessage.includes('records') || lowerMessage.includes('how many')) {
-        return "To see record counts:<br>1. Check the info text below the table<br>2. Apply status filters to count by category<br>3. Use the search to find specific records<br><br>The table shows 'Showing X to Y of Z records' at the bottom.";
-      } else if (lowerMessage.includes('page size') || lowerMessage.includes('optimal')) {
-        return "Optimal page size depends on your needs:<br>• <strong>10-25</strong> - Best for detailed review<br>• <strong>50</strong> - Balanced performance<br>• <strong>100+</strong> - Quick scanning<br><br>Current recommendation: <strong>25 rows</strong> for most use cases.";
-      } else if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
-        return "Hello! 👋 How can I assist you with your data today?";
-      } else if (lowerMessage.includes('help')) {
-        return "I'm here to help! You can ask me about:<br>• Table performance optimization<br>• Filter recommendations<br>• Dataset summaries<br>• Record counts<br>• Best practices<br><br>What would you like to know?";
-      } else {
-        return "Thanks for your message! I can help you with table performance, filters, data summaries, and more. Try one of the suggested questions above!";
-      }
-    }
-
-    function handleSuggestion(text) {
-      const input = document.getElementById('chatbotInput');
-      input.value = text;
-      sendMessage();
-    }
-
-    function handleKeyPress(event) {
-      if (event.key === 'Enter') {
-        sendMessage();
-      }
-    }
-
-    function scrollToBottom() {
-      const messagesContainer = document.getElementById('chatbotMessages');
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    $(document).ready(function() {
-      // Upload UI wiring
-      const dropZone = document.getElementById('dropZone');
-      const fileInput = document.getElementById('fileInput');
-
-      dropZone.addEventListener('click', () => fileInput.click());
-      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); });
-      dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        if (e.dataTransfer.files.length > 0) handleFileSelect(e.dataTransfer.files[0]);
-      });
-      fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) handleFileSelect(e.target.files[0]);
-      });
-
-      document.getElementById('btnUpload').addEventListener('click', uploadSelectedFile);
-      document.getElementById('btnClear').addEventListener('click', resetUpload);
-      document.getElementById('btnRemoveFile').addEventListener('click', resetUpload);
-      document.getElementById('statusClose').addEventListener('click', () => {
-        document.getElementById('uploadStatus').classList.remove('show');
-      });
-
-      // Chatbot wiring
-      document.getElementById('chatbotTrigger').addEventListener('click', toggleChatbot);
-      document.getElementById('chatbotClose').addEventListener('click', toggleChatbot);
-
-      // Filters
-      $('#applyFilters').on('click', function() {
-        if (!table) return;
-        table.ajax.reload();
-      });
-
-      $('#resetFilters').on('click', function() {
-        $("#filterStatus").val("");
-        $("#filterCategory").val("");
-        $("#filterFromDate").val("");
-        $("#filterToDate").val("");
-        if (table) table.ajax.reload();
-      });
-
-      $('#refreshData').on('click', function() {
-        if (table) table.ajax.reload(null, false);
-      });
-
-      window.addEventListener("resize", () => {
-        if (table) table.ajax.reload(null, false);
-      });
-
-      showStatus("info", "Upload a CSV to begin.");
-    });
-  </script>
+  showStatus("info","Upload a CSV to begin.");
+});
+</script>
 </body>
-</html> 
+</html>
